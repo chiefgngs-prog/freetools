@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free AI Prompt Generator - Create Perfect ChatGPT Prompts</title>
+<meta name="description" content="Free AI prompt generator. Tell us what you want and get a perfectly structured ChatGPT prompt instantly. No signup.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--surface2:#1c1c2e;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800;margin-bottom:8px}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:0 auto}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px;margin-top:12px}
+label:first-child{margin-top:0}
+select,input{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none}
+select:focus,input:focus{border-color:var(--primary)}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:16px}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.output{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px;margin-top:16px;min-height:80px;position:relative;font-size:14px;line-height:1.8;white-space:pre-wrap}
+.copy-btn{position:absolute;top:8px;right:8px;padding:6px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-dim);cursor:pointer;font-size:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 24px;background:var(--accent);color:#000;border-radius:8px;font-weight:600;z-index:999;opacity:0;transition:all .3s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:20px;margin-top:20px}
+.promo a{display:inline-block;padding:12px 28px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px}
+.examples{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.example-btn{padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-dim);cursor:pointer;font-size:13px;text-align:left}
+footer{text-align:center;padding:32px 20px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>AI Prompt <span>Generator</span></h1>
+<p>Tell me what you want ChatGPT to do. Get a perfectly structured prompt instantly.</p>
+</div>
+<div class="container">
+<div class="card">
+<label>What do you want ChatGPT to do?</label>
+<input type="text" id="task" placeholder="e.g., write a blog post about productivity">
+<label>What role should the AI play?</label>
+<select id="role">
+<option value="expert">Expert in the field</option>
+<option value="marketer">Marketing professional</option>
+<option value="copywriter">Direct response copywriter</option>
+<option value="consultant">Business consultant</option>
+<option value="developer">Senior software developer</option>
+<option value="designer">UX/UI designer</option>
+<option value="strategist">Business strategist</option>
+<option value="coach">Productivity coach</option>
+<option value="analyst">Data analyst</option>
+<option value="none">No specific role</option>
+</select>
+<label>Who is the target audience?</label>
+<input type="text" id="audience" placeholder="e.g., small business owners">
+<label>What format do you want?</label>
+<select id="format">
+<option value="paragraphs">Paragraphs</option>
+<option value="bullets">Bullet points</option>
+<option value="numbered">Numbered list</option>
+<option value="table">Table</option>
+<option value="steps">Step-by-step guide</option>
+<option value="outline">Outline</option>
+<option value="email">Email format</option>
+</select>
+<label>How long?</label>
+<select id="length">
+<option value="short">Short (100-200 words)</option>
+<option value="medium">Medium (300-500 words)</option>
+<option value="long">Long (800-1200 words)</option>
+<option value="any">Any length</option>
+</select>
+<label>Extra requirements? (tone, style)</label>
+<input type="text" id="extra" placeholder="e.g., professional tone, include examples">
+<button class="btn btn-go" onclick="generate()">Generate Prompt</button>
+</div>
+<div class="card">
+<div id="output" class="output"></div>
+</div>
+<div class="card">
+<label>Quick examples:</label>
+<div class="examples">
+<button class="example-btn" onclick="loadExample('write a landing page for my SaaS product','copywriter','startup founders','steps','medium')">Landing page copy</button>
+<button class="example-btn" onclick="loadExample('create a content calendar','marketer','small business owners','table','medium')">Content calendar</button>
+<button class="example-btn" onclick="loadExample('write a cold email','copywriter','decision makers','email','short')">Cold email</button>
+<button class="example-btn" onclick="loadExample('analyze competitor strategy','analyst','business owners','bullets','medium')">Competitor analysis</button>
+<button class="example-btn" onclick="loadExample('write a blog post','expert','professionals','paragraphs','long')">Blog post</button>
+<button class="example-btn" onclick="loadExample('create a study plan','coach','beginners','numbered','medium')">Study plan</button>
+</div>
+</div>
+<div class="promo">
+<p>Want 207 more professional prompts?</p>
+<a href="https://kyleqarbour-dot.github.io/aipromptvault/" target="_blank">Get the AI Prompt Vault</a>
+</div>
+</div>
+<footer><p><a href="https://kyleqarbour-dot.github.io/freetools/">More Free Tools</a></p></footer>
+<div class="toast" id="toast">Copied!</div>
+<script>
+function generate(){
+var task=document.getElementById("task").value.trim();
+if(!task){alert("Tell me what you want!");return;}
+var role=document.getElementById("role").value;
+var audience=document.getElementById("audience").value.trim();
+var format=document.getElementById("format").value;
+var length=document.getElementById("length").value;
+var extra=document.getElementById("extra").value.trim();
+var roleMap={expert:"an expert",marketer:"a marketing professional",copywriter:"a direct response copywriter",consultant:"a business consultant",developer:"a senior software developer",designer:"a UX/UI designer",strategist:"a business strategist",coach:"a productivity coach",analyst:"a data analyst",none:"a helpful assistant"};
+var formatMap={paragraphs:"Write in clear paragraphs with headings.",bullets:"Format as bullet points.",numbered:"Format as a numbered list.",table:"Present in a table format.",steps:"Present as a step-by-step guide.",outline:"Present as a structured outline.",email:"Format as a professional email."};
+var lengthMap={short:"Keep it concise (100-200 words).",medium:"Aim for 300-500 words.",long:"Be thorough (800-1200 words).",any:""};
+var prompt="Act as "+roleMap[role]+". ";
+if(audience)prompt+="Your audience is "+audience+". ";
+prompt+="Your task: "+task+". ";
+prompt+=formatMap[format]+" ";
+if(lengthMap[length])prompt+=lengthMap[length]+" ";
+if(extra)prompt+="Additional requirements: "+extra+". ";
+prompt+="Be specific, actionable, and avoid generic filler.";
+var out=document.getElementById("output");
+out.textContent=prompt;
+out.innerHTML=prompt+'<button class="copy-btn" onclick="copyPrompt()">Copy</button>';
+}
+function loadExample(t,r,a,f,l){
+document.getElementById("task").value=t;
+document.getElementById("role").value=r;
+document.getElementById("audience").value=a;
+document.getElementById("format").value=f;
+document.getElementById("length").value=l;
+generate();
+}
+function copyPrompt(){
+var text=document.getElementById("output").textContent.replace("Copy","").trim();
+navigator.clipboard.writeText(text).then(function(){var t=document.getElementById("toast");t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2000);});
+}
+</script>
+</body>
+</html>
