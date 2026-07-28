@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Generator Pro - Create & Download Free Invoices</title>
+<meta name="description" content="Create professional invoices in seconds. Free, no signup. Download as PDF or print.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f6fa;color:#2d3436;padding:20px}
+.toolbar{max-width:800px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.toolbar h1{font-size:22px}
+.toolbar-actions{display:flex;gap:8px}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:#6c5ce7;color:#fff}
+.btn-primary:hover{background:#5b4bda}
+.btn-secondary{background:#dfe6e9;color:#2d3436}
+.btn-secondary:hover{background:#b2bec3}
+.btn-green{background:#00b894;color:#fff}
+.btn-green:hover{background:#00a383}
+.invoice{max-width:800px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);padding:40px}
+.invoice-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px;flex-wrap:wrap;gap:20px}
+.from-section{flex:1;min-width:200px}
+.from-section h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#636e72;margin-bottom:8px}
+.from-section textarea,.from-section input{width:100%;border:none;border-bottom:1px solid #dfe6e9;padding:6px 0;font-size:14px;font-family:inherit;color:#2d3436;outline:none;resize:none;background:transparent}
+.from-section input:focus,.from-section textarea:focus{border-bottom-color:#6c5ce7}
+.invoice-meta{text-align:right}
+.invoice-meta h1{font-size:36px;color:#6c5ce7;margin-bottom:8px}
+.meta-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;justify-content:flex-end}
+.meta-row label{font-size:12px;color:#636e72;min-width:60px;text-align:right}
+.meta-row input{border:none;border-bottom:1px solid #dfe6e9;padding:4px;font-size:14px;text-align:right;width:140px;outline:none;font-family:inherit;color:#2d3436;background:transparent}
+.meta-row input:focus{border-bottom-color:#6c5ce7}
+.bill-to{margin-bottom:30px}
+.bill-to h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#636e72;margin-bottom:8px}
+.bill-to textarea{width:100%;border:1px solid #dfe6e9;border-radius:8px;padding:12px;font-size:14px;font-family:inherit;outline:none;min-height:70px;resize:vertical}
+.bill-to textarea:focus{border-color:#6c5ce7}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+th{text-align:left;padding:12px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#636e72;border-bottom:2px solid #dfe6e9}
+th:last-child,td:last-child{text-align:right}
+th:nth-last-child(2),td:nth-last-child(2){text-align:right}
+td{padding:12px;border-bottom:1px solid #ecf0f1;font-size:14px}
+td input{border:none;padding:4px;font-size:14px;font-family:inherit;outline:none;width:100%;color:#2d3436;background:transparent}
+td input:focus{background:#f5f6fa;border-radius:4px}
+.desc-cell input{font-weight:500}
+.num-cell{width:80px;text-align:right}
+.add-row-btn{padding:8px 16px;background:#f5f6fa;border:1px dashed #b2bec3;border-radius:8px;color:#636e72;cursor:pointer;font-size:13px;margin-top:8px}
+.add-row-btn:hover{background:#dfe6e9}
+.totals{margin-left:auto;width:300px;margin-bottom:30px}
+.total-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px}
+.total-row.grand{border-top:2px solid #2d3436;margin-top:8px;padding-top:12px;font-size:18px;font-weight:700}
+.total-row input{width:100px;text-align:right;border:none;border-bottom:1px solid #dfe6e9;padding:4px;font-size:14px;font-family:inherit;outline:none;color:#2d3436;background:transparent}
+.notes{margin-bottom:20px}
+.notes h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#636e72;margin-bottom:8px}
+.notes textarea{width:100%;border:1px solid #dfe6e9;border-radius:8px;padding:12px;font-size:14px;font-family:inherit;outline:none;min-height:50px;resize:vertical}
+.notes textarea:focus{border-color:#6c5ce7}
+.remove-row{color:#e74c3c;cursor:pointer;font-size:18px;padding:0 8px;border:none;background:none}
+.remove-row:hover{opacity:.7}
+@media print{.toolbar{display:none}.invoice{box-shadow:none;border-radius:0}body{padding:0;background:#fff}}
+@media(max-width:600px){.invoice{padding:20px}.invoice-header{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+<h1>🧾 Invoice Generator Pro</h1>
+<div class="toolbar-actions">
+<button class="btn btn-secondary" onclick="addRow()">+ Add Item</button>
+<button class="btn btn-primary" onclick="window.print()">🖨️ Print / PDF</button>
+<button class="btn btn-green" onclick="saveData()">💾 Save</button>
+</div>
+</div>
+
+<div class="invoice" id="invoice">
+<div class="invoice-header">
+<div class="from-section">
+<h3>From</h3>
+<input type="text" id="from-name" placeholder="Your Business Name" oninput="saveDraft()">
+<textarea id="from-address" rows="3" placeholder="Your Address&#10;City, State ZIP&#10;email@business.com" oninput="saveDraft()"></textarea>
+</div>
+<div class="invoice-meta">
+<h1>INVOICE</h1>
+<div class="meta-row"><label>Invoice #</label><input type="text" id="invoice-num" value="001" oninput="saveDraft()"></div>
+<div class="meta-row"><label>Date</label><input type="date" id="invoice-date" oninput="saveDraft()"></div>
+<div class="meta-row"><label>Due Date</label><input type="date" id="invoice-due" oninput="saveDraft()"></div>
+</div>
+</div>
+
+<div class="bill-to">
+<h3>Bill To</h3>
+<textarea id="bill-to" rows="3" placeholder="Client Name&#10;Client Address&#10;City, State ZIP&#10;client@email.com" oninput="saveDraft()"></textarea>
+</div>
+
+<table id="items-table">
+<thead>
+<tr>
+<th>Description</th>
+<th class="num-cell">Qty</th>
+<th class="num-cell">Rate</th>
+<th class="num-cell">Amount</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="items-body"></tbody>
+</table>
+<button class="add-row-btn" onclick="addRow()">+ Add Item</button>
+
+<div class="totals">
+<div class="total-row">
+<span>Subtotal</span>
+<span id="subtotal">$0.00</span>
+</div>
+<div class="total-row">
+<span>Tax (%) <input type="number" id="tax-rate" value="0" min="0" max="100" style="width:50px" oninput="calcTotals();saveDraft()"></span>
+<span id="tax-amount">$0.00</span>
+</div>
+<div class="total-row">
+<span>Discount <input type="number" id="discount" value="0" min="0" style="width:60px" oninput="calcTotals();saveDraft()"></span>
+<span id="discount-amount">$0.00</span>
+</div>
+<div class="total-row grand">
+<span>Total</span>
+<span id="grand-total">$0.00</span>
+</div>
+</div>
+
+<div class="notes">
+<h3>Notes / Payment Terms</h3>
+<textarea id="notes" placeholder="Payment due within 30 days. Make checks payable to..." oninput="saveDraft()"></textarea>
+</div>
+</div>
+
+<script>
+let rowCount=0;
+
+function addRow(desc='',qty=1,rate=0){
+const tbody=document.getElementById('items-body');
+const tr=document.createElement('tr');
+tr.id='row-'+rowCount;
+tr.innerHTML=`
+<td class="desc-cell"><input type="text" placeholder="Item description" value="${desc}" oninput="calcRow(${rowCount});saveDraft()"></td>
+<td class="num-cell"><input type="number" value="${qty}" min="1" style="width:60px;text-align:right" oninput="calcRow(${rowCount});saveDraft()"></td>
+<td class="num-cell"><input type="number" value="${rate}" min="0" step="0.01" style="width:80px;text-align:right" oninput="calcRow(${rowCount});saveDraft()"></td>
+<td class="num-cell" id="amount-${rowCount}">$0.00</td>
+<td><button class="remove-row" onclick="removeRow(${rowCount})">×</button></td>
+`;
+tbody.appendChild(tr);
+rowCount++;
+calcTotals();
+}
+
+function calcRow(idx){
+const row=document.getElementById('row-'+idx);
+if(!row)return;
+const qty=parseFloat(row.cells[1].querySelector('input').value)||0;
+const rate=parseFloat(row.cells[2].querySelector('input').value)||0;
+const amount=qty*rate;
+document.getElementById('amount-'+idx).textContent='$'+amount.toFixed(2);
+calcTotals();
+}
+
+function calcTotals(){
+let subtotal=0;
+for(let i=0;i<rowCount;i++){
+const row=document.getElementById('row-'+i);
+if(!row)continue;
+const qty=parseFloat(row.cells[1].querySelector('input').value)||0;
+const rate=parseFloat(row.cells[2].querySelector('input').value)||0;
+subtotal+=qty*rate;
+}
+const taxRate=parseFloat(document.getElementById('tax-rate').value)||0;
+const discount=parseFloat(document.getElementById('discount').value)||0;
+const taxAmt=subtotal*taxRate/100;
+const total=subtotal+taxAmt-discount;
+document.getElementById('subtotal').textContent='$'+subtotal.toFixed(2);
+document.getElementById('tax-amount').textContent='$'+taxAmt.toFixed(2);
+document.getElementById('discount-amount').textContent='-$'+discount.toFixed(2);
+document.getElementById('grand-total').textContent='$'+total.toFixed(2);
+}
+
+function removeRow(idx){
+document.getElementById('row-'+idx).remove();
+calcTotals();
+saveDraft();
+}
+
+function saveData(){
+saveDraft();
+alert('Invoice saved to browser!');
+}
+
+function saveDraft(){
+const data={
+fromName:document.getElementById('from-name').value,
+fromAddress:document.getElementById('from-address').value,
+invoiceNum:document.getElementById('invoice-num').value,
+invoiceDate:document.getElementById('invoice-date').value,
+invoiceDue:document.getElementById('invoice-due').value,
+billTo:document.getElementById('bill-to').value,
+taxRate:document.getElementById('tax-rate').value,
+discount:document.getElementById('discount').value,
+notes:document.getElementById('notes').value,
+items:[]
+};
+for(let i=0;i<rowCount;i++){
+const row=document.getElementById('row-'+i);
+if(!row)continue;
+data.items.push({
+desc:row.cells[0].querySelector('input').value,
+qty:row.cells[1].querySelector('input').value,
+rate:row.cells[2].querySelector('input').value
+});
+}
+localStorage.setItem('invoiceDraft',JSON.stringify(data));
+}
+
+function loadDraft(){
+const saved=localStorage.getItem('invoiceDraft');
+if(!saved){
+//default
+document.getElementById('invoice-date').value=new Date().toISOString().split('T')[0];
+const due=new Date();due.setDate(due.getDate()+30);
+document.getElementById('invoice-due').value=due.toISOString().split('T')[0];
+addRow('Web Design Services',1,1500);
+addRow('Logo Design',1,500);
+return;
+}
+const data=JSON.parse(saved);
+document.getElementById('from-name').value=data.fromName||'';
+document.getElementById('from-address').value=data.fromAddress||'';
+document.getElementById('invoice-num').value=data.invoiceNum||'001';
+document.getElementById('invoice-date').value=data.invoiceDate||'';
+document.getElementById('invoice-due').value=data.invoiceDue||'';
+document.getElementById('bill-to').value=data.billTo||'';
+document.getElementById('tax-rate').value=data.taxRate||0;
+document.getElementById('discount').value=data.discount||0;
+document.getElementById('notes').value=data.notes||'';
+if(data.items){
+data.items.forEach(item=>addRow(item.desc||'',parseInt(item.qty)||1,parseFloat(item.rate)||0));
+}
+}
+
+loadDraft();
+</script>
+</body>
+</html>

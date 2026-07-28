@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioLink Builder - Create Your Link-in-Bio Page Free</title>
+<meta name="description" content="Create a beautiful link-in-bio page like Linktree but free. No signup. Download and host anywhere.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0e0e1a;--surface:#1a1a2e;--surface2:#16213e;--primary:#e94560;--accent:#0f3460;--text:#eee;--text-dim:#888;--border:#2a2a4a;--green:#00d4aa}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{display:flex;min-height:100vh}
+.editor{flex:1;padding:24px;overflow-y:auto;max-height:100vh}
+.editor h1{font-size:22px;margin-bottom:4px}
+.editor p{color:var(--text-dim);font-size:13px;margin-bottom:24px}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.section h3{font-size:14px;color:var(--green);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+input,select,textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-bottom:8px}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+label{font-size:12px;color:var(--text-dim);display:block;margin-bottom:4px;margin-top:8px}
+.color-row{display:flex;gap:8px;align-items:center}
+.color-row input[type=color]{width:50px;height:38px;padding:2px;cursor:pointer}
+.link-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;position:relative}
+.link-item input{margin-bottom:6px}
+.remove-link{position:absolute;top:8px;right:8px;color:var(--primary);cursor:pointer;font-size:20px;background:none;border:none;padding:4px}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-add{background:var(--surface2);color:var(--text);border:1px dashed var(--border);width:100%;margin-top:4px}
+.btn-add:hover{background:var(--accent)}
+.btn-export{background:var(--green);color:#000}
+.btn-export:hover{opacity:.9}
+.preview-wrap{width:380px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:24px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.preview-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.phone{width:320px;background:var(--bg);border-radius:24px;border:3px solid var(--border);padding:24px 16px;min-height:500px}
+.phone-profile{text-align:center;margin-bottom:20px}
+.phone-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;font-weight:bold}
+.phone-name{font-size:18px;font-weight:700;margin-bottom:4px}
+.phone-bio{font-size:13px;color:var(--text-dim)}
+.phone-links{display:flex;flex-direction:column;gap:8px}
+.phone-link{display:block;padding:12px;text-align:center;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer}
+.phone-link:hover{transform:translateY(-1px);filter:brightness(1.1)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 24px;background:var(--green);color:#000;border-radius:8px;font-weight:600;z-index:999;opacity:0;transition:all .3s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+@media(max-width:900px){.app{flex-direction:column}.preview-wrap{width:100%;position:relative;height:auto}}
+</style>
+</head>
+<body>
+
+<div class="app">
+<!-- EDITOR -->
+<div class="editor">
+<h1>🔗 BioLink Builder</h1>
+<p>Create your link-in-bio page. No signup, no subscription. Free forever.</p>
+
+<div class="section">
+<h3>Profile</h3>
+<label>Name / Brand</label>
+<input type="text" id="p-name" value="Your Name" oninput="render()">
+<label>Bio</label>
+<input type="text" id="p-bio" value="Check out my links 👇" oninput="render()">
+<label>Avatar (emoji or initials)</label>
+<input type="text" id="p-avatar" value="🚀" oninput="render()" style="width:80px">
+<label>Background Color</label>
+<div class="color-row"><input type="color" id="p-bgcolor" value="#0e0e1a" oninput="render()"></div>
+<label>Avatar Color</label>
+<div class="color-row"><input type="color" id="p-avatarcolor" value="#e94560" oninput="render()"></div>
+</div>
+
+<div class="section">
+<h3>Style</h3>
+<label>Link Style</label>
+<select id="p-style" oninput="render()">
+<option value="solid">Solid Fill</option>
+<option value="outline">Outline</option>
+<option value="gradient">Gradient</option>
+</select>
+<label>Link Color</label>
+<div class="color-row"><input type="color" id="p-linkcolor" value="#e94560" oninput="render()"></div>
+<label>Text Color</label>
+<div class="color-row"><input type="color" id="p-textcolor" value="#ffffff" oninput="render()"></div>
+<label>Border Radius: <span id="p-radius-display">10</span>px</label>
+<input type="range" id="p-radius" min="0" max="30" value="10" oninput="document.getElementById('p-radius-display').textContent=this.value;render()" style="width:100%">
+</div>
+
+<div class="section">
+<h3>Links</h3>
+<div id="links-container"></div>
+<button class="btn btn-add" onclick="addLink()">+ Add Link</button>
+</div>
+
+<div class="section">
+<h3>Export</h3>
+<button class="btn btn-export" onclick="exportHTML()" style="width:100%">⬇️ Download HTML File</button>
+<p style="font-size:12px;color:var(--text-dim);margin-top:8px;text-align:center">Upload to any free host (GitHub Pages, Netlify, etc.)</p>
+</div>
+</div>
+
+<!-- PREVIEW -->
+<div class="preview-wrap">
+<div class="preview-label">📱 Live Preview</div>
+<div class="phone" id="phone">
+<div class="phone-profile">
+<div class="phone-avatar" id="phone-avatar">🚀</div>
+<div class="phone-name" id="phone-name">Your Name</div>
+<div class="phone-bio" id="phone-bio">Check out my links</div>
+</div>
+<div class="phone-links" id="phone-links"></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast">Downloaded!</div>
+
+<script>
+let links=[
+{text:'🌐 My Website',url:'https://example.com'},
+{text:'🐦 Twitter / X',url:'https://twitter.com'},
+{text:'📸 Instagram',url:'https://instagram.com'},
+{text:'📺 YouTube',url:'https://youtube.com'},
+];
+
+function addLink(){
+links.push({text:'New Link',url:'https://'});
+renderLinks();
+render();
+}
+
+function removeLink(idx){
+links.splice(idx,1);
+renderLinks();
+render();
+}
+
+function updateLink(idx,field,val){
+links[idx][field]=val;
+render();
+}
+
+function renderLinks(){
+const c=document.getElementById('links-container');
+c.innerHTML=links.map((l,i)=>`
+<div class="link-item">
+<button class="remove-link" onclick="removeLink(${i})">×</button>
+<label>Text</label>
+<input type="text" value="${escapeAttr(l.text)}" oninput="updateLink(${i},'text',this.value)" placeholder="Link text">
+<label>URL</label>
+<input type="text" value="${escapeAttr(l.url)}" oninput="updateLink(${i},'url',this.value)" placeholder="https://...">
+</div>
+`).join('');
+}
+
+function render(){
+const name=document.getElementById('p-name').value;
+const bio=document.getElementById('p-bio').value;
+const avatar=document.getElementById('p-avatar').value;
+const bgcolor=document.getElementById('p-bgcolor').value;
+const avatarcolor=document.getElementById('p-avatarcolor').value;
+const style=document.getElementById('p-style').value;
+const linkcolor=document.getElementById('p-linkcolor').value;
+const textcolor=document.getElementById('p-textcolor').value;
+const radius=document.getElementById('p-radius').value;
+
+document.getElementById('phone').style.background=bgcolor;
+const avEl=document.getElementById('phone-avatar');
+avEl.textContent=avatar;
+avEl.style.background=avatarcolor;
+document.getElementById('phone-name').textContent=name;
+document.getElementById('phone-name').style.color=textcolor;
+document.getElementById('phone-bio').textContent=bio;
+
+const linksEl=document.getElementById('phone-links');
+linksEl.innerHTML=links.map(l=>{
+let bg='',border='';
+if(style==='solid'){bg=linkcolor;border='none';}
+else if(style==='outline'){bg='transparent';border='2px solid '+linkcolor;}
+else if(style==='gradient'){bg='linear-gradient(135deg,'+linkcolor+','+avatarcolor+')';border='none';}
+return `<a class="phone-link" href="${escapeAttr(l.url)}" target="_blank" style="background:${bg};border:${border};color:${textcolor};border-radius:${radius}px">${escapeHtml(l.text)}</a>`;
+}).join('');
+}
+
+function exportHTML(){
+const name=document.getElementById('p-name').value;
+const bio=document.getElementById('p-bio').value;
+const avatar=document.getElementById('p-avatar').value;
+const bgcolor=document.getElementById('p-bgcolor').value;
+const avatarcolor=document.getElementById('p-avatarcolor').value;
+const style=document.getElementById('p-style').value;
+const linkcolor=document.getElementById('p-linkcolor').value;
+const textcolor=document.getElementById('p-textcolor').value;
+const radius=document.getElementById('p-radius').value;
+
+const linksHTML=links.map(l=>{
+let bg='',border='';
+if(style==='solid'){bg=linkcolor;border='none';}
+else if(style==='outline'){bg='transparent';border='2px solid '+linkcolor;}
+else if(style==='gradient'){bg='linear-gradient(135deg,'+linkcolor+','+avatarcolor+')';border='none';}
+return `<a class="link" href="${escapeAttr(l.url)}" target="_blank" style="background:${bg};border:${border};color:${textcolor};border-radius:${radius}px">${escapeHtml(l.text)}</a>`;
+}).join('\n');
+
+const html=`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${escapeHtml(name)}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:${bgcolor};min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{max-width:400px;width:100%;text-align:center}
+.avatar{width:80px;height:80px;border-radius:50%;background:${avatarcolor};margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.name{font-size:24px;font-weight:700;color:${textcolor};margin-bottom:8px}
+.bio{font-size:15px;color:${textcolor};opacity:0.7;margin-bottom:24px}
+.links{display:flex;flex-direction:column;gap:10px}
+.link{display:block;padding:14px;text-align:center;font-size:15px;font-weight:600;text-decoration:none;transition:transform .2s}
+.link:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="avatar">${escapeHtml(avatar)}</div>
+<div class="name">${escapeHtml(name)}</div>
+<div class="bio">${escapeHtml(bio)}</div>
+<div class="links">
+${linksHTML}
+</div>
+</div>
+</body>
+</html>`;
+
+const blob=new Blob([html],{type:'text/html'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='bio-link.html';
+a.click();
+const toast=document.getElementById('toast');
+toast.classList.add('show');
+setTimeout(()=>toast.classList.remove('show'),2000);
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escapeAttr(t){return t.replace(/"/g,'&quot;').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+renderLinks();
+render();
+</script>
+</body>
+</html>
