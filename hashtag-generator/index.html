@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Hashtag Generator - Get Trending Hashtags</title>
+<meta name="description" content="Free hashtag generator. Get trending hashtags for Instagram, TikTok, Twitter. No signup required.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--surface2:#1c1c2e;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px;margin-top:12px}
+label:first-child{margin-top:0}
+input,select{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none}
+input:focus,select:focus{border-color:var(--primary)}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:16px}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.tag{padding:6px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--accent);cursor:pointer}
+.tag:hover{background:var(--primary);color:#fff}
+.copy-all{margin-top:16px;padding:12px 24px;background:var(--accent);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;width:100%}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 24px;background:var(--accent);color:#000;border-radius:8px;font-weight:600;z-index:999;opacity:0;transition:all .3s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:20px;margin-top:20px}
+.promo a{display:inline-block;padding:12px 28px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px}
+footer{text-align:center;padding:32px 20px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Hashtag <span>Generator</span></h1>
+<p>Get trending hashtags for your posts. Free, no signup.</p>
+</div>
+<div class="container">
+<div class="card">
+<label>What is your post about?</label>
+<input type="text" id="topic" placeholder="e.g., fitness motivation, startup tips, food photography">
+<label>Platform</label>
+<select id="platform">
+<option value="instagram">Instagram</option>
+<option value="tiktok">TikTok</option>
+<option value="twitter">Twitter / X</option>
+<option value="linkedin">LinkedIn</option>
+<option value="youtube">YouTube</option>
+</select>
+<button class="btn btn-go" onclick="generate()">Generate Hashtags</button>
+</div>
+<div class="card" id="result-card" style="display:none">
+<h3 style="color:var(--accent);margin-bottom:12px">Your Hashtags</h3>
+<div class="tags" id="tag-list"></div>
+<button class="copy-all" onclick="copyAll()">Copy All Hashtags</button>
+</div>
+<div class="promo">
+<p>Want 207 AI prompts for social media and marketing?</p>
+<a href="https://kyleqarbour-dot.github.io/aipromptvault/">Get the AI Prompt Vault</a>
+</div>
+</div>
+<footer><p><a href="https://kyleqarbour-dot.github.io/freetools/">More Free Tools</a></p></footer>
+<div class="toast" id="toast">Copied!</div>
+<script>
+var hashtagDB={
+business:["#business","#entrepreneur","#startup","#smallbusiness","#businessowner","#success","#motivation","#leadership","#growth","#hustle","#businesstips","#marketing","#strategy","#innovation","#mindset","#productivity","#goals","#inspiration","#networking","#businesstips"],
+marketing:["#marketing","#digitalmarketing","#socialmedia","#contentmarketing","#seo","#branding","#advertising","#marketingtips","#growthhacking","#socialmediamarketing","#onlinemarketing","#marketingstrategy","#digitalmarketingtips","#smm","#marketingdigital","#contentstrategy","#emailmarketing","#ppc","#marketingonline","#brandstrategy"],
+fitness:["#fitness","#workout","#gym","#fitnessmotivation","#fit","#training","#health","#fitnessjourney","#bodybuilding","#crossfit","#motivation","#gymlife","#healthylifestyle","#fitfam","#strong","#cardio","#weightloss","#muscle","#nutrition","#wellness"],
+food:["#food","#foodie","#foodporn","#instafood","#foodphotography","#yummy","#delicious","#foodlover","#foodstagram","#cooking","#homemade","#foodblogger","#tasty","#dinner","#chef","#recipe","#foodgasm","#healthyfood","#breakfast","#dessert"],
+travel:["#travel","#travelphotography","#wanderlust","#travelgram","#instatravel","#nature","#adventure","#explore","#vacation","#traveling","#trip","#travelblogger","#sunset","#beautiful","#landscape","#photography","#memories","#journey","#travelingram","#instagood"],
+tech:["#tech","#technology","#coding","#programming","#developer","#software","#ai","#machinelearning","#webdev","#javascript","#python","#startup","#innovation","#computerscience","#techie","#digital","#future","#tech4good","#code","#appdev"],
+fashion:["#fashion","#style","#ootd","#fashionblogger","#outfit","#instafashion","#fashionista","#streetstyle","#lookoftheday","#trendy","#chic","#elegant","#designer","#fashionstyle","#clothes","#accessories","#fashiondaily","#stylish","#fashionable","#whatiwore"],
+art:["#art","#artist","#artwork","#drawing","#painting","#illustration","#creative","#design","#sketch","#digitalart","#artistsoninstagram","#contemporaryart","#fineart","#artoftheday","#instaart","#artgallery","#sketchbook","#handmade","#artlovers","#creativity"],
+music:["#music","#musician","#singer","#songwriter","#guitar","#newmusic","#musiclife","#producer","#instamusic","#musicvideo","#livemusic","#band","#singing","#song","#musically","#beats","#hiphop","#rap","#dj","#piano"],
+education:["#education","#learning","#students","#teacher","#study","#knowledge","#school","#college","#university","#motivation","#studentslife","#studytips","#exam","#books","#reading","#research","#science","#academic","#teaching","#lifelonglearning"]
+};
+function generate(){
+var topic=document.getElementById("topic").value.trim().toLowerCase();
+var platform=document.getElementById("platform").value;
+if(!topic){alert("Enter what your post is about!");return;}
+var matchedKey=null;
+for(var key in hashtagDB){
+if(topic.includes(key)||key.includes(topic.split(" ")[0])){
+matchedKey=key;break;
+}
+}
+if(!matchedKey){
+var keys=Object.keys(hashtagDB);
+matchedKey=keys[Math.floor(Math.random()*keys.length)];
+}
+var tags=hashtagDB[matchedKey];
+if(platform=="tiktok"){tags=tags.slice(0,5).concat(["#fyp","#foryou","#viral","#tiktok","#trending"]);}
+if(platform=="twitter"){tags=tags.slice(0,3);}
+if(platform=="linkedin"){tags=tags.filter(function(t){return!["#fitnessmotivation","#fitfam","#gymlife"].includes(t);}).slice(0,5);}
+var card=document.getElementById("result-card");
+var list=document.getElementById("tag-list");
+list.innerHTML="";
+tags.forEach(function(tag){
+var el=document.createElement("div");
+el.className="tag";
+el.textContent=tag;
+el.onclick=function(){navigator.clipboard.writeText(tag);showToast();};
+list.appendChild(el);
+});
+card.style.display="block";
+window._currentTags=tags.join(" ");
+}
+function copyAll(){
+if(window._currentTags){
+navigator.clipboard.writeText(window._currentTags);
+showToast();
+}
+}
+function showToast(){
+var t=document.getElementById("toast");t.classList.add("show");
+setTimeout(function(){t.classList.remove("show")},2000);
+}
+</script>
+</body>
+</html>
