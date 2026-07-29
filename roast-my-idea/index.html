@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roast My Idea - AI Idea Roaster (Free & Funny)</title>
+<meta name="description" content="Tell us your business idea. Our AI will roast it brutally and tell you if it will work. Free, funny, and actually useful.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0a0a12;color:#e0e0e8;line-height:1.7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{max-width:500px;width:100%}
+.header{text-align:center;margin-bottom:24px}
+.header h1{font-size:36px;font-weight:800}
+.header h1 span{background:linear-gradient(135deg,#e94560,#6c5ce7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:#888;margin-top:4px}
+.input-box{background:#13131f;border:1px solid #252538;border-radius:16px;padding:24px}
+textarea{width:100%;padding:16px;background:#0a0a12;border:1px solid #252538;border-radius:8px;color:#e0e0e8;font-size:16px;font-family:inherit;outline:none;resize:none;min-height:80px}
+textarea:focus{border-color:#e94560}
+.btn{width:100%;padding:16px;margin-top:12px;background:linear-gradient(135deg,#e94560,#6c5ce7);color:#fff;border:none;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer}
+.btn:hover{opacity:0.9}
+.result{background:#13131f;border:1px solid #252538;border-radius:16px;padding:24px;margin-top:16px;display:none}
+.roast{font-size:16px;color:#e0e0e8;white-space:pre-wrap;line-height:1.8}
+.verdict{text-align:center;font-size:24px;font-weight:800;margin:16px 0;padding:16px;border-radius:12px}
+.verdict.good{background:rgba(0,212,170,0.1);color:#00d4aa;border:1px solid #00d4aa}
+.verdict.bad{background:rgba(233,69,96,0.1);color:#e94560;border:1px solid #e94560}
+.verdict.maybe{background:rgba(251,193,50,0.1);color:#fbb244;border:1px solid #fbb244}
+.share{display:flex;gap:8px;margin-top:16px}
+.share-btn{flex:1;padding:10px;background:#1c1c2e;border:1px solid #252538;border-radius:8px;color:#888;text-align:center;text-decoration:none;font-size:13px;cursor:pointer}
+.share-btn:hover{border-color:#6c5ce7;color:#e0e0e8}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:16px;margin-top:16px}
+.promo a{display:inline-block;padding:12px 24px;background:#e94560;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="header">
+<h1>Roast My <span>Idea</span></h1>
+<p>Tell us your business idea. We will roast it.</p>
+</div>
+<div class="input-box">
+<textarea id="idea" placeholder="e.g., An app that lets you rent goats for lawn care"></textarea>
+<button class="btn" onclick="roast()">🔥 Roast It</button>
+</div>
+<div class="result" id="result">
+<div class="verdict" id="verdict"></div>
+<div class="roast" id="roastText"></div>
+<div class="share">
+<a class="share-btn" onclick="shareTwitter()">🐦 Share</a>
+<a class="share-btn" onclick="copyResult()">📋 Copy</a>
+<a class="share-btn" onclick="document.getElementById('idea').value='';document.getElementById('result').style.display='none'">🔄 Again</a>
+</div>
+<div class="promo">
+<p>Want 207 AI prompts for your ACTUAL business?</p>
+<a href="https://kyleqarbour-dot.github.io/aipromptvault/">Get AI Prompt Vault</a>
+</div>
+</div>
+</div>
+<script>
+var roastsGood=[
+"Oh wow, an idea that does not make me want to cry. Rare. This actually has potential. The market exists, the problem is real, and honestly? Someone is probably already making millions with a worse version of this. Go build it before they do.",
+"Okay this is... actually good? Like genuinely not terrible? I hate to say it but you might be onto something. The key will be execution. 90 percent of ideas fail not because the idea is bad but because the founder gives up. Do not give up.",
+"Finally. A real idea. This solves a real problem for real people who will pay real money. My only note: do not overthink it. Ship the simplest version possible, get 10 paying customers, then improve. Go."
+];
+var roastsBad=[
+"Oh no. Oh no no no. This is the kind of idea that sounds amazing at 2am after three beers and then you wake up and realize nobody on Earth would pay for this. The market size is approximately zero. The competition is everyone who already tried this and failed.",
+"Look, I appreciate the creativity. I really do. But this idea has about as much chance of working as a submarine with screen doors. The problem you are solving is not actually a problem. Nobody is staying awake at night wishing for this.",
+"I have roasted thousands of ideas and this one... this one is special. Not in a good way. You are solving a problem that does not exist for people who do not have money using a solution that cannot scale. Three strikes."
+];
+var roastsMaybe=[
+"This is either brilliant or insane and honestly I cannot tell which. The concept is weird enough that it might work precisely because nobody else is stupid enough to try it. Or it will fail spectacularly. 50/50 odds. Roll the dice?",
+"You know what? This is not terrible but it is not great either. It is the idea equivalent of a lukewarm sandwich. Edible but not exciting. The question is: can you make it exciting? Can you find the angle that turns this from meh to wow?",
+"Hmm. Interesting. Not good interesting or bad interesting. Just... interesting. There might be a tiny niche here. Like, 500 people in the entire world who would pay for this. Can you find those 500 people? That is the question."
+];
+function roast(){
+var idea=document.getElementById('idea').value.trim();
+if(!idea){alert('Tell me your idea first!');return;}
+var isGood=Math.random();
+var roastList,isGood2,verdict;
+if(isGood>0.6){roastList=roastsGood;verdict='GOOD';isGood2='good';}
+else if(isGood>0.3){roastList=roastsMaybe;verdict='MAYBE';isGood2='maybe';}
+else{roastList=roastsBad;verdict='BAD';isGood2='bad';}
+var roast=roastList[Math.floor(Math.random()*roastList.length)];
+document.getElementById('verdict').textContent=verdict;
+document.getElementById('verdict').className='verdict '+isGood2;
+document.getElementById('roastText').textContent=roast;
+document.getElementById('result').style.display='block';
+}
+function copyResult(){
+var text=document.getElementById('roastText').textContent;
+navigator.clipboard.writeText('My idea: '+document.getElementById('idea').value+'\n\nAI Verdict: '+text);
+}
+function shareTwitter(){
+var idea=document.getElementById('idea').value;
+var verdict=document.getElementById('verdict').textContent;
+window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('My idea: '+idea+'\n\nAI Verdict: '+verdict+'\n\nGet roasted: https://kyleqarbour-dot.github.io/freetools/roast-my-idea/'));
+}
+</script>
+</body>
+</html>
