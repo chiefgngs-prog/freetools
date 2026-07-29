@@ -13,13 +13,13 @@ jobs:
         run: |
           echo "# Free Online Tools - No Signup Required" > /tmp/tool.md
           echo "" >> /tmp/tool.md
-          echo "AI Prompt Generator: https://kyleqarbour-dot.github.io/freetools/prompt-generator/" >> /tmp/tool.md
-          echo "Bio Generator: https://kyleqarbour-dot.github.io/freetools/bio-generator/" >> /tmp/tool.md
-          echo "Hashtag Generator: https://kyleqarbour-dot.github.io/freetools/hashtag-generator/" >> /tmp/tool.md
-          echo "ToolKit Pro: https://kyleqarbour-dot.github.io/freetools/toolkit-pro/index.html" >> /tmp/tool.md
-          echo "Invoice Generator: https://kyleqarbour-dot.github.io/freetools/invoice-generator/index.html" >> /tmp/tool.md
+          echo "AI Prompt Generator: https://chiefgngs-prog.github.io/freetools/prompt-generator/" >> /tmp/tool.md
+          echo "Bio Generator: https://chiefgngs-prog.github.io/freetools/bio-generator/" >> /tmp/tool.md
+          echo "Hashtag Generator: https://chiefgngs-prog.github.io/freetools/hashtag-generator/" >> /tmp/tool.md
+          echo "ToolKit Pro: https://chiefgngs-prog.github.io/freetools/toolkit-pro/index.html" >> /tmp/tool.md
+          echo "Invoice Generator: https://chiefgngs-prog.github.io/freetools/invoice-generator/index.html" >> /tmp/tool.md
           echo "" >> /tmp/tool.md
-          echo "All tools: https://kyleqarbour-dot.github.io/freetools/" >> /tmp/tool.md
+          echo "All tools: https://chiefgngs-prog.github.io/freetools/" >> /tmp/tool.md
           echo "" >> /tmp/tool.md
-          echo "AI Prompt Vault (207 prompts): https://kyleqarbour-dot.github.io/aipromptvault/" >> /tmp/tool.md
+          echo "AI Prompt Vault (207 prompts): https://chiefgngs-prog.github.io/promptvault/" >> /tmp/tool.md
           gh gist create --public --desc "Free Online Tools - $(date +%Y%m%d)" -f "free-tools-$(date +%Y%m%d).md" /tmp/tool.md || true
