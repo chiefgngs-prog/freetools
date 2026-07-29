@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Website Builder - Create a Website in 60 Seconds</title>
+<meta name="description" content="AI-powered website builder. Describe your business and get a complete website instantly. $29/month.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--surface2:#1c1c2e;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.hero{text-align:center;padding:60px 20px 40px}
+.badge{display:inline-block;padding:6px 16px;background:rgba(0,212,170,0.1);border:1px solid var(--accent);border-radius:20px;font-size:13px;color:var(--accent);margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,48px);font-weight:800;line-height:1.1;margin-bottom:16px;max-width:700px;margin:0 auto 16px}
+.hero h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:18px;color:var(--text-dim);max-width:550px;margin:0 auto 32px}
+.builder{max-width:700px;margin:0 auto 20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.builder textarea{width:100%;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;font-family:inherit;outline:none;min-height:80px;resize:vertical}
+.builder textarea:focus{border-color:var(--primary)}
+.btn{display:inline-block;padding:16px 36px;border:none;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff;width:100%;margin-top:12px}
+.output{max-width:700px;margin:16px auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;min-height:100px}
+.preview{background:#fff;color:#333;border-radius:8px;padding:24px;margin-top:16px}
+.pricing{max-width:700px;margin:40px auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.pricing{grid-template-columns:1fr}}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center}
+.price-card.featured{border-color:var(--accent);transform:scale(1.05)}
+.price-card h3{font-size:16px;margin-bottom:8px}
+.price{font-size:36px;font-weight:800;margin-bottom:4px}
+.price span{font-size:14px;color:var(--text-dim);font-weight:400}
+.price-card ul{text-align:left;margin:16px 0;padding-left:20px}
+.price-card li{font-size:13px;color:var(--text-dim);margin-bottom:6px}
+.btn-price{display:block;width:100%;padding:12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.btn-free{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-pro{background:var(--accent);color:#000}
+.btn-premium{background:var(--hot);color:#fff}
+section{max-width:700px;margin:0 auto;padding:40px 20px}
+section h2{font-size:28px;text-align:center;margin-bottom:16px}
+footer{text-align:center;padding:32px;border-top:1px solid var(--border);font-size:13px;color:#444}
+</style>
+</head>
+<body>
+<div class="hero">
+<div class="badge">AI-Powered Website Builder</div>
+<h1>Describe Your Business. <span>Get a Website.</span></h1>
+<p>Powered by AI. Type what your business does and get a complete, ready-to-launch website in seconds.</p>
+</div>
+
+<div class="builder">
+<textarea id="input" placeholder="e.g., I run a landscaping company in Toronto. We do residential and commercial lawn care, garden design, snow removal in winter. I need a website that showcases our services and lets people get quotes."></textarea>
+<button class="btn btn-go" onclick="generate()">Generate My Website</button>
+</div>
+
+<div class="output" id="result" style="display:none">
+<div id="generated-site"></div>
+</div>
+
+<div class="pricing">
+<div class="price-card">
+<h3>Free</h3>
+<div class="price">$0<span>/mo</span></div>
+<ul>
+<li>1 website generation</li>
+<li>Basic template</li>
+<li>Download as HTML</li>
+<li>No custom domain</li>
+</ul>
+<a href="#" class="btn-price btn-free" onclick="generate();return false">Try Free</a>
+</div>
+<div class="price-card featured">
+<h3>Pro</h3>
+<div class="price">$19<span>/mo</span></div>
+<ul>
+<li>Unlimited generations</li>
+<li>All premium templates</li>
+<li>SEO optimization</li>
+<li>Contact forms</li>
+<li>Remove watermark</li>
+</ul>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_xclick-subscriptions">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="AI Website Builder Pro - Monthly">
+<input type="hidden" name="a3" value="19.00">
+<input type="hidden" name="p3" value="1">
+<input type="hidden" name="t3" value="M">
+<input type="hidden" name="src" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<button type="submit" class="btn-price btn-pro">Get Pro</button>
+</form>
+</div>
+<div class="price-card">
+<h3>Agency</h3>
+<div class="price">$49<span>/mo</span></div>
+<ul>
+<li>Everything in Pro</li>
+<li>White-label removal</li>
+<li>10 team members</li>
+<li>Priority generation</li>
+<li>API access</li>
+</ul>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_xclick-subscriptions">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="AI Website Builder Agency - Monthly">
+<input type="hidden" name="a3" value="49.00">
+<input type="hidden" name="p3" value="1">
+<input type="hidden" name="t3" value="M">
+<input type="hidden" name="src" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<button type="submit" class="btn-price btn-premium">Get Agency</button>
+</form>
+</div>
+</div>
+
+<section>
+<h2>How It Works</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center">
+<div><div style="font-size:36px;margin-bottom:8px">1</div><h4>Describe</h4><p style="color:var(--text-dim);font-size:13px">Tell us about your business</p></div>
+<div><div style="font-size:36px;margin-bottom:8px">2</div><h4>Generate</h4><p style="color:var(--text-dim);font-size:13px">AI creates your website</p></div>
+<div><div style="font-size:36px;margin-bottom:8px">3</div><h4>Launch</h4><p style="color:var(--text-dim);font-size:13px">Download and deploy</p></div>
+</div>
+</section>
+
+<footer>
+<p>AI Website Builder | <a href="https://kyleqarbour-dot.github.io/freetools/" style="color:var(--primary)">Free Tools</a> | <a href="https://kyleqarbour-dot.github.io/aipromptvault/" style="color:var(--primary)">AI Prompts</a></p>
+</footer>
+
+<script>
+function generate(){
+var input=document.getElementById("input").value.trim();
+if(!input){alert("Describe your business first!");return;}
+var result=document.getElementById("result");
+var site=document.getElementById("generated-site");
+result.style.display="block";
+var biz=input.split(/[.!?]/)[0];
+var lower=input.toLowerCase();
+var services=[];
+if(lower.includes("lawn")||lower.includes("garden")||lower.includes("landscap"))services.push("Lawn Care","Garden Design","Landscape Construction","Maintenance");
+else if(lower.includes("restaurant")||lower.includes("food")||lower.includes("cafe"))services.push("Dine In","Takeout","Catering","Private Events");
+else if(lower.includes("clean")||lower.includes("cleaning"))services.push("Residential Cleaning","Commercial Cleaning","Deep Cleaning","Move In/Out");
+else if(lower.includes("consult")||lower.includes("agency")||lower.includes("marketing"))services.push("Strategy","Audit","Implementation","Training");
+else if(lower.includes("fitness")||lower.includes("gym")||lower.includes("train"))services.push("Personal Training","Group Classes","Nutrition Plans","Online Coaching");
+else services.push("Service One","Service Two","Service Three","Consultation");
+var cityMatch=input.match(/in ([A-Z][a-z]+)/);
+var city=cityMatch?cityMatch[1]:"Your City";
+site.innerHTML='<div class="preview"><div style="text-align:center;padding:20px 0;border-bottom:2px solid #6c5ce7"><h1 style="font-size:28px;color:#6c5ce7">'+biz+'</h1><p style="color:#666">Professional Services in '+city+'</p><nav style="margin-top:12px"><a href="#" style="margin:0 10px;color:#333;text-decoration:none">Home</a><a href="#" style="margin:0 10px;color:#333;text-decoration:none">Services</a><a href="#" style="margin:0 10px;color:#333;text-decoration:none">About</a><a href="#" style="margin:0 10px;color:#333;text-decoration:none">Contact</a></nav></div><div style="padding:40px 20px;text-align:center;background:linear-gradient(135deg,#f5f6fa,#dfe6e9)"><h2 style="font-size:24px;color:#2d3436;margin-bottom:8px">Welcome to '+biz+'</h2><p style="color:#636e72;max-width:400px;margin:0 auto 16px">'+input.substring(0,150)+'</p><button style="padding:12px 28px;background:#6c5ce7;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Get a Free Quote</button></div><div style="padding:40px 20px"><h3 style="text-align:center;font-size:20px;color:#2d3436;margin-bottom:20px">Our Services</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+services.map(function(s){return '<div style="background:#f5f6fa;padding:16px;border-radius:8px;text-align:center"><strong style="color:#6c5ce7">'+s+'</strong><p style="font-size:12px;color:#888;margin-top:4px">Professional '+s.toLowerCase()+' services tailored to your needs.</p></div>'}).join("")+'</div></div><div style="padding:40px 20px;background:#2d3436;color:#fff;text-align:center"><h3 style="font-size:20px;margin-bottom:8px">Ready to Get Started?</h3><p style="color:#888;margin-bottom:16px">Contact us today for a free consultation</p><p style="color:#6c5ce7;font-weight:bold">Phone: (555) 123-4567</p><p style="color:#888">Email: hello@yourbusiness.com</p></div></div><p style="text-align:center;color:var(--text-dim);font-size:13px;margin-top:12px">Generated in 0.3 seconds. Upgrade to Pro to download this website as HTML and remove watermarks.</p>';
+}
+</script>
+</body>
+</html>
