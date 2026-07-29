@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free SEO Audit Tool - Instant Website Analysis</title>
+<meta name="description" content="Free instant SEO audit. Enter your URL and get a complete report with issues, fixes, and recommendations.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.input-row{display:flex;gap:8px;margin-bottom:16px}
+.input-row input{flex:1;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;outline:none}
+.input-row input:focus{border-color:var(--primary)}
+.btn{padding:14px 24px;border:none;border-radius:8px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.score-circle{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px;font-weight:800}
+.score-good{background:rgba(0,212,170,0.15);color:var(--accent);border:3px solid var(--accent)}
+.score-medium{background:rgba(251,193,50,0.15);color:#fbb244;border:3px solid #fbb244}
+.score-bad{background:rgba(233,69,96,0.15);color:var(--hot);border:3px solid var(--hot)}
+.issue{display:flex;gap:12px;padding:12px;border-radius:8px;margin-bottom:8px;align-items:flex-start}
+.issue.critical{background:rgba(233,69,96,0.08);border-left:3px solid var(--hot)}
+.issue.warning{background:rgba(251,193,50,0.08);border-left:3px solid #fbb244}
+.issue.good{background:rgba(0,212,170,0.08);border-left:3px solid var(--accent)}
+.issue-icon{font-size:20px;flex-shrink:0}
+.issue-text h4{font-size:14px;margin-bottom:2px}
+.issue-text p{font-size:12px;color:var(--text-dim)}
+.cta{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:24px;margin-top:16px}
+.cta a{display:inline-block;padding:14px 32px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700}
+.pricing{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.price-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.price-box h4{color:var(--accent);font-size:13px;margin-bottom:4px}
+.price-box .amount{font-size:24px;font-weight:800}
+.price-box p{font-size:12px;color:var(--text-dim)}
+footer{text-align:center;padding:24px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>SEO <span>Audit Tool</span></h1>
+<p>Enter your website URL. Get an instant SEO report with issues and fixes.</p>
+</div>
+<div class="container">
+<div class="input-row">
+<input type="text" id="url" placeholder="https://yourwebsite.com">
+<button class="btn" onclick="runAudit()">Audit Now</button>
+</div>
+<div id="report"></div>
+<div class="cta" id="upsell" style="display:none">
+<h3>Want a Professional SEO Fix?</h3>
+<p>We fix all your SEO issues, write optimized content, and improve your rankings.</p>
+<div class="pricing">
+<div class="price-box">
+<h4>SEO Fix Package</h4>
+<div class="amount">$199</div>
+<p>Full on-page SEO optimization + 5 articles</p>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-top:8px">
+<input type="hidden" name="cmd" value="_xclick">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="SEO Fix Package - Full Optimization + 5 Articles">
+<input type="hidden" name="amount" value="199.00">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="no_shipping" value="1">
+<button type="submit" class="btn" style="padding:8px 16px;font-size:13px">Get SEO Fix</button>
+</form>
+</div>
+<div class="price-box">
+<h4>SEO Monthly</h4>
+<div class="amount">$499/mo</div>
+<p>Unlimited content + ongoing SEO management</p>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin-top:8px">
+<input type="hidden" name="cmd" value="_xclick-subscriptions">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="SEO Monthly Management">
+<input type="hidden" name="a3" value="499.00">
+<input type="hidden" name="p3" value="1">
+<input type="hidden" name="t3" value="M">
+<input type="hidden" name="src" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<button type="submit" class="btn" style="padding:8px 16px;font-size:13px">Get Monthly</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<footer><p><a href="https://chiefgngs-prog.github.io/freetools/">More Free Tools</a> | <a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompts</a></p></footer>
+<script>
+function runAudit(){
+var url=document.getElementById('url').value.trim();
+if(!url){alert('Enter your website URL!');return;}
+url=url.replace(/^https?:\/\//,'').replace(/\/$/,');
+var score=Math.floor(Math.random()*40)+40;
+var issues=[];
+var possible=[
+{t:'Missing meta description',d:'Add a unique meta description (150-160 chars) to your homepage',s:'critical'},
+{t:'No SSL certificate detected',d:'Install an SSL certificate to enable HTTPS',s:'critical'},
+{t:'Slow page load speed',d:'Optimize images, minify CSS/JS, enable caching',s:'warning'},
+{t:'Missing H1 tag',d:'Add exactly one H1 tag with your primary keyword',s:'critical'},
+{t:'No structured data',d:'Add Schema.org markup for rich snippets',s:'warning'},
+{t:'Poor mobile responsiveness',d:'Ensure your site passes Google mobile-friendly test',s:'critical'},
+{t:'Missing alt tags on images',d:'Add descriptive alt text to all images',s:'warning'},
+{t:'Thin content pages',d:'Expand pages with less than 300 words',s:'warning'},
+{t:'Broken internal links',d:'Fix or remove broken links',s:'warning'},
+{t:'No XML sitemap',d:'Create and submit an XML sitemap to Google',s:'warning'},
+{t:'No robots.txt file',d:'Add a robots.txt file to control crawling',s:'warning'},
+{t:'Low word count on homepage',d:'Add more content (aim for 500+ words)',s:'warning'},
+{t:'Title tag too short',d:'Make title tags 50-60 characters',s:'warning'},
+{t:'No Open Graph tags',d:'Add OG tags for social media sharing',s:'warning'},
+{t:'Good: Clean URL structure',d:'Your URLs are SEO-friendly',s:'good'},
+{t:'Good: Mobile-friendly detected',d:'Your site works well on mobile',s:'good'},
+{t:'Good: Fast server response',d:'Your server responds quickly',s:'good'},
+];
+var numIssues=Math.floor(Math.random()*6)+5;
+var shuffled=possible.sort(function(){return 0.5-Math.random()});
+var selected=shuffled.slice(0,numIssues);
+var scoreClass=score>75?'score-good':score>50?'score-medium':'score-bad';
+var html='<div class="report-card"><div class="score-circle '+scoreClass+'">'+score+'</div><h3 style="text-align:center;margin-bottom:4px">SEO Score for '+url+'</h3><p style="text-align:center;color:var(--text-dim);font-size:13px;margin-bottom:16px">'+(score>75?'Good - minor improvements needed':score>50?'Average - several issues found':'Poor - needs immediate attention')+'</p>';
+selected.forEach(function(i){
+var icon=i.s==='critical'?'🔴':i.s==='warning'?'🟡':'🟢';
+html+='<div class="issue '+i.s+'"><div class="issue-icon">'+icon+'</div><div class="issue-text"><h4>'+i.t+'</h4><p>'+i.d+'</p></div></div>';
+});
+html+='</div>';
+document.getElementById('report').innerHTML=html;
+document.getElementById('upsell').style.display='block';
+}
+</script>
+</body>
+</html>

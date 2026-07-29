@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Vault API - 207 Prompts as JSON API</title>
+<meta name="description" content="Access 207 professional AI prompts via API. Free tier 10 requests/day. Pro tier unlimited.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.card h3{color:var(--accent);margin-bottom:12px;font-size:16px}
+code{display:block;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'Fira Code',monospace;font-size:13px;color:var(--accent);overflow-x:auto;margin-bottom:8px}
+.endpoint{display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:6px}
+.method{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.get{background:rgba(0,212,170,0.15);color:var(--accent)}
+.path{font-family:monospace;font-size:13px;color:var(--text)}
+.desc{font-size:12px;color:var(--text-dim)}
+.pricing{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+.price-card.featured{border-color:var(--accent)}
+.price-card h4{font-size:14px;color:var(--accent);margin-bottom:4px}
+.amount{font-size:32px;font-weight:800}
+.amount span{font-size:14px;color:var(--text-dim)}
+.price-card ul{text-align:left;margin:12px 0;list-style:none}
+.price-card li{font-size:12px;color:var(--text-dim);padding:4px 0;padding-left:16px;position:relative}
+.price-card li:before{content:"-";position:absolute;left:0;color:var(--accent)}
+.btn{display:block;width:100%;padding:10px;border:none;border-radius:6px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;font-size:14px}
+.btn-free{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-pro{background:var(--accent);color:#000}
+footer{text-align:center;padding:24px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Prompt Vault <span>API</span></h1>
+<p>Access 207 professional AI prompts programmatically. Build apps, integrate into workflows.</p>
+</div>
+<div class="container">
+
+<div class="card">
+<h3>Quick Start</h3>
+<code>curl https://chiefgngs-prog.github.io/promptvault/prompts.json</code>
+<p style="font-size:13px;color:var(--text-dim)">Returns all 207 prompts as structured JSON.</p>
+</div>
+
+<div class="card">
+<h3>Endpoints</h3>
+<div class="endpoint">
+<span class="method get">GET</span>
+<span class="path">/prompts.json</span>
+<span class="desc">- All prompts (free)</span>
+</div>
+<div class="endpoint">
+<span class="method get">GET</span>
+<span class="path">/app/index.html</span>
+<span class="desc">- Searchable web app (free)</span>
+</div>
+</div>
+
+<div class="card">
+<h3>Response Format</h3>
+<code>{
+  "categories": {
+    "business": {
+      "name": "Business & Strategy",
+      "prompts": [
+        {
+          "title": "SWOT Analysis",
+          "prompt": "Conduct a comprehensive..."
+        }
+      ]
+    }
+  }
+}</code>
+</div>
+
+<div class="pricing">
+<div class="price-card">
+<h4>Free</h4>
+<div class="amount">$0</div>
+<ul>
+<li>Full JSON access</li>
+<li>207 prompts</li>
+<li>No API key needed</li>
+<li>Attribution required</li>
+</ul>
+<a href="https://chiefgngs-prog.github.io/promptvault/prompts.json" class="btn btn-free">Get JSON</a>
+</div>
+<div class="price-card featured">
+<h4>Pro License</h4>
+<div class="amount">$49<span>/one-time</span></div>
+<ul>
+<li>Commercial usage</li>
+<li>No attribution</li>
+<li>Resell in apps</li>
+<li>Priority updates</li>
+<li>Private support</li>
+</ul>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_xclick">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="Prompt Vault API - Pro License">
+<input type="hidden" name="amount" value="49.00">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="no_shipping" value="1">
+<button type="submit" class="btn btn-pro">Get Pro License</button>
+</form>
+</div>
+</div>
+
+</div>
+<footer><p><a href="https://chiefgngs-prog.github.io/freetools/">Free Tools</a> | <a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompts</a></p></footer>
+</body>
+</html>

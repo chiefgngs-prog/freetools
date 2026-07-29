@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media Content Calendar - AI-Powered SaaS</title>
+<meta name="description" content="AI-powered social media content calendar. Generate 30 days of content in seconds. Schedule, plan, and post.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.app{max-width:900px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.card h3{color:var(--accent);margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px}
+input,select{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-bottom:12px}
+input:focus,select:focus{border-color:var(--primary)}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;width:100%;background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:16px}
+.day{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px;min-height:80px;font-size:11px}
+.day .num{font-weight:700;color:var(--accent);margin-bottom:4px}
+.day .post{font-size:10px;color:var(--text-dim);margin-bottom:2px}
+.pricing{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+@media(max-width:700px){.pricing{grid-template-columns:1fr}}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+.price-card.featured{border-color:var(--hot)}
+.price-card h4{color:var(--accent);font-size:13px;margin-bottom:4px}
+.amount{font-size:32px;font-weight:800;margin-bottom:4px}
+.amount span{font-size:14px;color:var(--text-dim)}
+.price-card ul{text-align:left;list-style:none;margin:12px 0}
+.price-card li{font-size:12px;color:var(--text-dim);padding:4px 0;padding-left:16px;position:relative}
+.price-card li:before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;background:var(--accent);border-radius:50%}
+footer{text-align:center;padding:24px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Social Media <span>Content Calendar</span></h1>
+<p>Generate 30 days of social media content in seconds. Never run out of ideas.</p>
+</div>
+<div class="app">
+
+<div class="card">
+<h3>Generate Your Calendar</h3>
+<label>Business / Niche</label>
+<input type="text" id="biz" placeholder="e.g., Coffee shop, Fitness coach, SaaS startup">
+<label>Platform</label>
+<select id="platform">
+<option>Instagram</option>
+<option>Twitter / X</option>
+<option>LinkedIn</option>
+<option>Facebook</option>
+<option>TikTok</option>
+</select>
+<label>Tone</label>
+<select id="tone">
+<option>Professional</option>
+<option>Casual & Fun</option>
+<option>Inspirational</option>
+<option>Educational</option>
+<option>Promotional</option>
+</select>
+<button class="btn" onclick="generate()">Generate 30 Days of Content</button>
+</div>
+
+<div class="card" id="calendarCard" style="display:none">
+<h3>Your Content Calendar</h3>
+<div class="calendar" id="calendar"></div>
+</div>
+
+<div class="card">
+<h3>Pricing</h3>
+<div class="pricing">
+<div class="price-card">
+<h4>Free</h4>
+<div class="amount">$0</div>
+<ul>
+<li>1 calendar generation</li>
+<li>Basic content types</li>
+<li>No export</li>
+</ul>
+</div>
+<div class="price-card featured">
+<h4>Pro</h4>
+<div class="amount">$19<span>/mo</span></div>
+<ul>
+<li>Unlimited calendars</li>
+<li>All platforms</li>
+<li>Export as CSV/Sheets</li>
+<li>Hashtag suggestions</li>
+<li>Best posting times</li>
+</ul>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_xclick-subscriptions">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="Social Media Calendar Pro - Monthly">
+<input type="hidden" name="a3" value="19.00">
+<input type="hidden" name="p3" value="1">
+<input type="hidden" name="t3" value="M">
+<input type="hidden" name="src" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<button type="submit" style="padding:10px 20px;background:var(--hot);color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer;width:100%">Get Pro</button>
+</form>
+</div>
+<div class="price-card">
+<h4>Done For You</h4>
+<div class="amount">$299<span>/mo</span></div>
+<ul>
+<li>We create all content</li>
+<li>Daily posts written</li>
+<li>Hashtag research</li>
+<li>Monthly strategy call</li>
+</ul>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_xclick-subscriptions">
+<input type="hidden" name="business" value="battleeyefriendly@outlook.com">
+<input type="hidden" name="item_name" value="Social Media Done-For-You - Monthly">
+<input type="hidden" name="a3" value="299.00">
+<input type="hidden" name="p3" value="1">
+<input type="hidden" name="t3" value="M">
+<input type="hidden" name="src" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="no_note" value="1">
+<button type="submit" style="padding:10px 20px;background:var(--accent);color:#000;border:none;border-radius:6px;font-weight:700;cursor:pointer;width:100%">Get Done-For-You</button>
+</form>
+</div>
+</div>
+</div>
+
+</div>
+<footer><p><a href="https://chiefgngs-prog.github.io/freetools/">More Tools</a> | <a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompts</a></p></footer>
+<script>
+var contentTypes=['Educational tip','Behind the scenes','User generated','Product showcase','How-to guide','Industry news','Question/poll','Inspirational quote','Tutorial','Before/after','Customer story','Quick tip','Myth busting','Resource share','Day in the life','Tool recommendation','Checklist','Common mistake','FAQ','Mini thread','Statistics','Trending topic','Personal story','Challenge','Flashback','Goal setting','Community spotlight','Pro tip','Comparison','Call to action'];
+var platforms={Instagram:['Reel idea','Carousel post','Story poll','IGTV topic','Grid post'],'Twitter / X':['Thread topic','Hot take','Reply opportunity','Quote tweet','Tip thread'],LinkedIn:['Article topic','Professional insight','Industry analysis','Career advice','Case study'],Facebook:['Video idea','Event announcement','Community post','Product highlight','Customer review'],TikTok:['Trend idea','Tutorial','Day in my life','POV','Before and after']};
+function generate(){
+var biz=document.getElementById('biz').value.trim();
+var plat=document.getElementById('platform').value;
+var tone=document.getElementById('tone').value;
+if(!biz){alert('Enter your business!');return;}
+var platTypes=platforms[plat]||platforms.Instagram;
+var html='';
+for(var i=1;i<=30;i++){
+var type=contentTypes[(i-1)%contentTypes.length];
+var platType=platTypes[(i-1)%platTypes.length];
+var week=Math.ceil(i/7);
+html+='<div class="day"><div class="num">Day '+i+'</div><div class="post">'+type+'</div><div class="post" style="color:var(--accent)">'+platType+'</div></div>';
+}
+document.getElementById('calendar').innerHTML=html;
+document.getElementById('calendarCard').style.display='block';
+}
+</script>
+</body>
+</html>
