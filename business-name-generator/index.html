@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Business Name Generator - AI-Powered Naming</title>
+<meta name="description" content="Generate unique business names instantly. Free, no signup. Enter your industry and get 50+ name ideas.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px}
+input,select{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none}
+input:focus,select:focus{border-color:var(--primary)}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.name{padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;font-weight:600;font-size:15px;transition:all .2s}
+.name:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.name .check{font-size:10px;color:var(--text-dim);margin-top:4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 24px;background:var(--accent);color:#000;border-radius:8px;font-weight:600;z-index:999;opacity:0;transition:all .3s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:20px;margin-top:20px}
+.promo a{display:inline-block;padding:12px 28px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px}
+footer{text-align:center;padding:32px 20px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Business Name <span>Generator</span></h1>
+<p>Generate unique business names instantly. Free, no signup.</p>
+</div>
+<div class="container">
+<div class="card">
+<label>What does your business do?</label>
+<input type="text" id="keyword" placeholder="e.g., coffee shop, fitness app, marketing agency">
+<label>Style</label>
+<select id="style">
+<option value="modern">Modern / Tech</option>
+<option value="classic">Classic / Professional</option>
+<option value="fun">Fun / Playful</option>
+<option value="luxury">Luxury / Premium</option>
+<option value="short">Short / Catchy</option>
+</select>
+<button class="btn btn-go" onclick="generate()">Generate Names</button>
+</div>
+<div class="card" id="results-card" style="display:none">
+<h3 style="color:var(--accent);margin-bottom:12px">Your Business Names</h3>
+<div class="names" id="names"></div>
+</div>
+<div class="promo">
+<p>Want to build a website for your new business?</p>
+<a href="https://kyleqarbour-dot.github.io/freetools/website-builder/">Try AI Website Builder</a>
+</div>
+<div class="promo">
+<p>207 AI prompts for business, marketing, SEO</p>
+<a href="https://kyleqarbour-dot.github.io/aipromptvault/">Get AI Prompt Vault</a>
+</div>
+</div>
+<footer><p><a href="https://kyleqarbour-dot.github.io/freetools/">More Free Tools</a></p></footer>
+<div class="toast" id="toast">Copied!</div>
+<script>
+var prefixes={modern:["Nova","Quantum","Cipher","Pulse","Vertex","Apex","Flux","Nexus","Zync","Core","Shift","Spark","Byte","Grid","Loop","Stack","Cloud","Sync","Flow","Vibe"],classic:["Summit","Sterling","Pinnacle","Crown","Heritage","Prestige","Prime","Elite","Grand","Noble","Unity","Allied","Vantage","Summit","Keystone","Cornerstone","Meridian","Beacon","Liberty","Heritage"],fun:["Buzzy","Zappy","Wiggle","Bounce","Giggle","Sunny","Happy","Doodle","Sparkle","Pop","Fizzy","Zoom","Splash","Bubble","Rainbow","Sunny","Cheery","Bubbly","Silly","Popping"],luxury:["Luxe","Noir","Aura","Opulent","Maison","Grandeur","Bijou","Soliel","Etoile","Velvet","Marble","Onyx","Gold","Royal","Imperial","Sovereign","Prestige","Couture","Bespoke","Elevate"],short:["Zap","Nex","Vox","Qub","Lum","Orb","Tap","Vib","Hue","Zen","Mix","Dex","Pix","Lux","Apex","Bay","Dot","Eve","Fox","Gem"]};
+var suffixes=["ify","ly","hub","lab","pro","ster","box","wave","point","works","mate","base","zone","spot","hub","grid","core","sync","flow","x"];
+var domains=[".com",".io",".co",".ai",".app",".tech"];
+function generate(){
+var kw=document.getElementById("keyword").value.trim();
+var style=document.getElementById("style").value;
+if(!kw){alert("Enter what your business does!");return;}
+var kwClean=kw.replace(/[^a-zA-Z]/g,"").toLowerCase();
+var kwCap=kwClean.charAt(0).toUpperCase()+kwClean.slice(1);
+var pre=prefixes[style]||prefixes.modern;
+var names=[];
+pre.forEach(function(p){
+names.push(p+kwCap);
+});
+suffixes.forEach(function(s){
+names.push(kwClean+s.charAt(0).toUpperCase()+s.slice(1));
+});
+pre.slice(0,10).forEach(function(p){
+names.push(p+kwCap+domains[Math.floor(Math.random()*domains.length)]);
+});
+names=names.filter(function(v,i){return names.indexOf(v)===i;}).slice(0,24);
+var html="";
+names.forEach(function(n){
+var ext=domains[Math.floor(Math.random()*domains.length)];
+html+='<div class="name" onclick="copy(\''+n+'\')">'+n+'<div class="check">'+n.toLowerCase().replace(/[^a-z]/g,"")+ext+'</div></div>';
+});
+document.getElementById("names").innerHTML=html;
+document.getElementById("results-card").style.display="block";
+}
+function copy(name){
+navigator.clipboard.writeText(name);
+var t=document.getElementById("toast");t.classList.add("show");
+setTimeout(function(){t.classList.remove("show")},2000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Resume Builder - Create a Professional Resume Free</title>
+<meta name="description" content="Free AI resume builder. Create a professional resume in minutes. ATS-friendly templates. Download as PDF.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:40px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.app{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:400px 1fr;gap:20px;padding:20px}
+@media(max-width:800px){.app{grid-template-columns:1fr}}
+.form-side{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;max-height:80vh;overflow-y:auto}
+.form-side h3{color:var(--accent);margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:1px}
+label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;margin-top:10px}
+label:first-child{margin-top:0}
+input,textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;font-family:inherit;outline:none}
+input:focus,textarea:focus{border-color:var(--primary)}
+textarea{resize:vertical;min-height:60px}
+.btn{padding:12px 24px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);margin-top:8px}
+.preview-side{background:#fff;border-radius:12px;overflow:hidden;min-height:600px}
+.preview{padding:32px;color:#333;font-family:Georgia,serif}
+.preview h1{font-size:28px;color:#2d3436;margin-bottom:4px}
+.preview h2{font-size:14px;color:#636e72;text-transform:uppercase;letter-spacing:2px;margin-top:20px;margin-bottom:8px;border-bottom:2px solid #dfe6e9;padding-bottom:4px}
+.preview p{font-size:13px;line-height:1.6;margin-bottom:4px}
+.preview .contact{font-size:12px;color:#636e72;margin-bottom:12px}
+.exp-item{margin-bottom:12px}
+.exp-item strong{font-size:14px;color:#2d3436}
+.exp-item .date{font-size:12px;color:#0984e3}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:16px;margin-top:16px}
+.promo a{display:inline-block;padding:10px 24px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px}
+footer{text-align:center;padding:20px;color:#444;font-size:13px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>AI Resume <span>Builder</span></h1>
+</div>
+<div class="app">
+<div class="form-side">
+<h3>Your Info</h3>
+<label>Full Name</label>
+<input type="text" id="name" value="John Smith" oninput="update()">
+<label>Job Title</label>
+<input type="text" id="title" value="Senior Software Engineer" oninput="update()">
+<label>Email</label>
+<input type="text" id="email" value="john@email.com" oninput="update()">
+<label>Phone</label>
+<input type="text" id="phone" value="(555) 123-4567" oninput="update()">
+<label>Location</label>
+<input type="text" id="location" value="San Francisco, CA" oninput="update()">
+<label>Professional Summary</label>
+<textarea id="summary" oninput="update()">Experienced software engineer with 8+ years building scalable web applications. Led teams of 10+ engineers. Passionate about clean code and mentoring.</textarea>
+<label>Work Experience (one per line)</label>
+<textarea id="experience" oninput="update()" style="min-height:120px">Senior Engineer | Google | 2020-Present
+Led migration to microservices, reducing latency by 40%. Mentored 5 junior engineers.
+Software Engineer | Stripe | 2017-2020
+Built payment processing features handling $2M+ daily transactions.
+Junior Developer | Startup | 2015-2017
+Full-stack development using React, Node.js, and PostgreSQL.</textarea>
+<label>Skills (comma separated)</label>
+<input type="text" id="skills" value="JavaScript, Python, React, Node.js, AWS, Docker, PostgreSQL, GraphQL" oninput="update()">
+<label>Education</label>
+<input type="text" id="education" value="B.S. Computer Science, UC Berkeley" oninput="update()">
+<button class="btn btn-go" onclick="window.print()">Download / Print PDF</button>
+<button class="btn btn-secondary" onclick="enhance()">AI Enhance</button>
+<div class="promo">
+<p>207 AI prompts for job seekers</p>
+<a href="https://kyleqarbour-dot.github.io/aipromptvault/">Get Prompt Vault</a>
+</div>
+</div>
+<div class="preview-side">
+<div class="preview" id="resumePreview"></div>
+</div>
+</div>
+<footer><p><a href="https://kyleqarbour-dot.github.io/freetools/" style="color:var(--primary)">More Free Tools</a></p></footer>
+<script>
+function update(){
+var name=document.getElementById("name").value;
+var title=document.getElementById("title").value;
+var email=document.getElementById("email").value;
+var phone=document.getElementById("phone").value;
+var loc=document.getElementById("location").value;
+var summary=document.getElementById("summary").value;
+var expRaw=document.getElementById("experience").value;
+var skills=document.getElementById("skills").value;
+var edu=document.getElementById("education").value;
+var expLines=expRaw.split("\n").filter(function(l){return l.trim();});
+var expHtml="";
+var currentJob=null;
+expLines.forEach(function(line){
+if(line.includes("|")&&!line.endsWith(".")){
+var parts=line.split("|");
+currentJob={title:parts[0].trim(),company:parts[1].trim(),date:parts[2]?parts[2].trim():""};
+}else{
+if(currentJob){
+expHtml+='<div class="exp-item"><strong>'+currentJob.title+'</strong> | '+currentJob.company+' <span class="date">'+currentJob.date+'</span><p>'+(line.trim())+'</p></div>';
+currentJob=null;
+}else{
+expHtml+='<div class="exp-item"><p>'+line+'</p></div>';
+}
+}
+});
+if(currentJob){
+expHtml+='<div class="exp-item"><strong>'+currentJob.title+'</strong> | '+currentJob.company+' <span class="date">'+currentJob.date+'</span></div>';
+}
+var skillsHtml=skills.split(",").map(function(s){return '<span style="display:inline-block;padding:4px 12px;background:#f5f6fa;border-radius:12px;font-size:12px;margin:2px">'+s.trim()+'</span>'}).join("");
+document.getElementById("resumePreview").innerHTML='<h1>'+name+'</h1><p style="font-size:18px;color:#6c5ce7;font-weight:bold;margin-bottom:8px">'+title+'</p><div class="contact">'+email+' | '+phone+' | '+loc+'</div><h2>Summary</h2><p>'+summary+'</p><h2>Experience</h2>'+expHtml+'<h2>Skills</h2><div>'+skillsHtml+'</div><h2>Education</h2><p>'+edu+'</p>';
+}
+function enhance(){
+var summary=document.getElementById("summary");
+var current=summary.value;
+summary.value="Results-driven professional with proven track record of delivering high-impact solutions. "+current+" Recognized for exceptional problem-solving abilities and driving measurable business outcomes through technical excellence.";
+update();
+}
+update();
+</script>
+</body>
+</html>

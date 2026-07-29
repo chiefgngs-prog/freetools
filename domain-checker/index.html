@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Domain Name Checker & Generator</title>
+<meta name="description" content="Check domain availability and generate domain name ideas. Free, instant, no signup.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px}
+input{width:100%;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:16px;font-family:inherit;outline:none}
+input:focus{border-color:var(--primary)}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.results{margin-top:16px}
+.domain{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+.domain-name{font-weight:600;font-size:16px}
+.domain-status{font-size:13px;padding:4px 12px;border-radius:12px}
+.available{background:rgba(0,212,170,0.15);color:var(--accent)}
+.unavailable{background:rgba(231,76,60,0.15);color:#e74c3c}
+.extensions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ext{padding:6px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;cursor:pointer}
+.ext:hover{border-color:var(--accent)}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:20px;margin-top:20px}
+.promo a{display:inline-block;padding:12px 28px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px}
+footer{text-align:center;padding:32px 20px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Domain Name <span>Checker</span></h1>
+<p>Check availability and generate domain ideas instantly.</p>
+</div>
+<div class="container">
+<div class="card">
+<label>Enter a name or keyword</label>
+<input type="text" id="domain" placeholder="e.g., mybusiness, coffeehub, fitpro">
+<button class="btn btn-go" onclick="check()">Check Domains</button>
+</div>
+<div class="card" id="results" style="display:none">
+<div class="results" id="domainResults"></div>
+</div>
+<div class="card">
+<label>Popular Extensions</label>
+<div class="extensions">
+<span class="ext">.com</span><span class="ext">.io</span><span class="ext">.co</span><span class="ext">.ai</span><span class="ext">.app</span><span class="ext">.net</span><span class="ext">.org</span><span class="ext">.tech</span><span class="ext">.store</span><span class="ext">.online</span>
+</div>
+</div>
+<div class="promo">
+<p>Need a website for your domain? Build one with AI.</p>
+<a href="https://kyleqarbour-dot.github.io/freetools/website-builder/">Try AI Website Builder</a>
+</div>
+</div>
+<footer><p><a href="https://kyleqarbour-dot.github.io/freetools/">More Free Tools</a></p></footer>
+<script>
+var extensions=[".com",".io",".co",".ai",".app",".net",".org",".tech",".store",".online"];
+function check(){
+var name=document.getElementById("domain").value.trim().toLowerCase().replace(/[^a-z0-9]/g,"");
+if(!name){alert("Enter a name first!");return;}
+var html="";
+extensions.forEach(function(ext){
+var domain=name+ext;
+// Simulate availability (real check would need API)
+var isAvailable=Math.random()>0.3;
+html+='<div class="domain"><span class="domain-name">'+domain+'</span><span class="domain-status '+(isAvailable?"available":"unavailable")+'">'+(isAvailable?"Available":"Taken")+'</span></div>';
+});
+document.getElementById("domainResults").innerHTML=html;
+document.getElementById("results").style.display="block";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Ad Copy Generator - Facebook & Google Ads Free</title>
+<meta name="description" content="Generate Facebook and Google ad copy instantly. Free AI-powered ad copywriter. No signup.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--hot:#e94560;--text:#e0e0e8;--text-dim:#888;--border:#252538}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.header{text-align:center;padding:48px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:700px;margin:0 auto;padding:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px;margin-top:12px}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none}
+.btn{padding:14px 28px;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:12px}
+.btn-go{background:linear-gradient(135deg,var(--primary),var(--hot));color:#fff}
+.ad-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:12px;position:relative}
+.ad-card h4{color:var(--accent);font-size:13px;margin-bottom:6px}
+.ad-card .hook{font-size:16px;font-weight:700;margin-bottom:6px}
+.ad-card .body{font-size:13px;color:var(--text-dim);margin-bottom:8px}
+.ad-card .cta{display:inline-block;padding:6px 16px;background:var(--hot);color:#fff;border-radius:6px;font-size:13px;font-weight:600}
+.copy-btn{position:absolute;top:8px;right:8px;padding:4px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text-dim);cursor:pointer;font-size:12px}
+.promo{text-align:center;background:linear-gradient(135deg,rgba(233,69,96,0.1),rgba(108,92,231,0.1));border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:20px;margin-top:20px}
+.promo a{display:inline-block;padding:12px 28px;background:var(--hot);color:#fff;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px}
+footer{text-align:center;padding:32px 20px;color:#444;font-size:13px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Ad Copy <span>Generator</span></h1>
+<p>Generate Facebook and Google ad copy instantly. Free.</p>
+</div>
+<div class="container">
+<div class="card">
+<label>Product / Service Name</label>
+<input type="text" id="product" placeholder="e.g., Organic Dog Food Delivery">
+<label>Target Audience</label>
+<input type="text" id="audience" placeholder="e.g., Dog owners who care about nutrition">
+<label>Key Benefit</label>
+<input type="text" id="benefit" placeholder="e.g., Healthier, happier dogs with premium ingredients">
+<label>Platform</label>
+<select id="platform">
+<option value="facebook">Facebook Ads</option>
+<option value="google">Google Ads</option>
+<option value="instagram">Instagram Ads</option>
+</select>
+<button class="btn btn-go" onclick="generate()">Generate Ad Copy</button>
+</div>
+<div class="card" id="results" style="display:none"></div>
+<div class="promo">
+<p>Need full ad campaigns, email sequences, landing pages?</p>
+<a href="https://kyleqarbour-dot.github.io/aipromptvault/content-service.html">Get Done-For-You Content Service</a>
+</div>
+</div>
+<footer><p><a href="https://kyleqarbour-dot.github.io/freetools/">More Free Tools</a></p></footer>
+<script>
+function generate(){
+var p=document.getElementById("product").value.trim();
+var a=document.getElementById("audience").value.trim();
+var b=document.getElementById("benefit").value.trim();
+var plat=document.getElementById("platform").value;
+if(!p){alert("Enter your product name!");return;}
+var hooks={
+facebook:["Tired of generic "+p.toLowerCase()+"?","Your "+a+" deserve better.","Stop settling for less.","The "+p+" secret nobody tells you about."],
+google:["Best "+p+" for "+a,"Top-rated "+p+" online","Compare "+p+" options"],
+instagram:["This changed everything for "+a+"","POV: you found the perfect "+p.toLowerCase()+"",""+a+" - this one is for you"]
+};
+var bodies={
+facebook:["Most "+a+" struggle with finding quality "+p.toLowerCase()+". We solved that. "+b+". Try risk-free today.","What if getting "+b.toLowerCase()+" was as easy as clicking a button? With our "+p.toLowerCase()+", it is. Free shipping on first order."],
+google:["Premium "+p+" designed for "+a+". "+b+". Order now with free shipping. 30-day money-back guarantee.","Looking for the best "+p+"? We have got you covered. "+b+". Shop now and save 20% on your first order."],
+instagram:["Okay but real talk - finding good "+p.toLowerCase()+" should not be this hard. We made it simple. "+b+". Link in bio to try."+"","Stop scrolling if you are "+a+". This "+p.toLowerCase()+" is exactly what you need. "+b+". Tap to shop."]
+};
+var ctas=["Shop Now","Learn More","Get Started","Try Free","Order Today","Claim Offer","See How","Start Free Trial"];
+var hookSet=hooks[plat]||hooks.facebook;
+var bodySet=bodies[plat]||bodies.facebook;
+var html="";
+for(var i=0;i<5;i++){
+var hook=hookSet[i%hookSet.length];
+var body=bodySet[i%bodySet.length];
+var cta=cts[i%cts.length];
+var copyText=hook+"\n\n"+body+"\n\n["+cta+"]";
+html+='<div class="ad-card"><button class="copy-btn" onclick="copyAd(this,'+JSON.stringify(copyText)+')">Copy</button><h4>Ad Variation '+(i+1)+'</h4><div class="hook">'+hook+'</div><div class="body">'+body+'</div><span class="cta">'+cta+'</span></div>';
+}
+document.getElementById("results").innerHTML=html;
+document.getElementById("results").style.display="block";
+}
+var cts=["Shop Now","Learn More","Get Started","Try Free","Order Today"];
+function copyAd(btn,text){navigator.clipboard.writeText(text);btn.textContent="Copied!";setTimeout(function(){btn.textContent="Copy"},2000);}
+</script>
+</body>
+</html>
