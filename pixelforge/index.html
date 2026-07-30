@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelForge - AI-Generated Game Assets (Instant, Free, No Signup)</title>
+<meta name="description" content="Generate game sprites, textures, icons, and pixel art instantly in your browser. No signup, no API, no backend. Procedural pixel art generator with 10+ styles.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--primary:#58a6ff;--accent:#3fb950;--hot:#f85149;--text:#c9d1d9;--text-dim:#8b949e;--purple:#bc8cff;--yellow:#d29922;--pink:#f778ba}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden}
+.header{text-align:center;padding:40px 20px 20px}
+.badge{display:inline-block;padding:4px 12px;background:rgba(247,120,186,0.1);border:1px solid var(--pink);border-radius:12px;font-size:12px;color:var(--pink);margin-bottom:12px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--pink),var(--purple),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.controls{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.control-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.control{display:flex;flex-direction:column;gap:4px}
+.control label{font-size:12px;color:var(--text-dim);font-weight:600}
+.control select,.control input[type="range"]{width:100%;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;outline:none}
+.control select:focus{border-color:var(--primary)}
+.range-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim)}
+.btn{padding:12px 24px;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.1s}
+.btn-gen{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;width:100%;margin-top:16px}
+.btn-gen:hover{opacity:0.9}
+.btn-sm{padding:6px 14px;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:4px;cursor:pointer}
+.canvas-container{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;text-align:center}
+#spriteCanvas{image-rendering:pixelated;image-rendering:crisp-edges;border:2px solid var(--border);border-radius:8px;background:#000}
+.canvas-controls{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:16px}
+.gallery-item{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px;text-align:center;cursor:pointer;transition:all 0.1s}
+.gallery-item:hover{border-color:var(--primary)}
+.gallery-item canvas{image-rendering:pixelated;border-radius:4px}
+.gallery-item .label{font-size:10px;color:var(--text-dim);margin-top:4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:8px 20px;background:var(--accent);color:#000;border-radius:6px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all 0.2s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.section-title{font-size:16px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:16px}
+.preset{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all 0.1s}
+.preset:hover{border-color:var(--purple);background:rgba(188,140,255,0.05)}
+.preset .emoji{font-size:24px}
+.preset .name{font-size:12px;color:var(--text);margin-top:4px}
+footer{text-align:center;padding:24px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="badge">NOBODY HAS THIS - PROCEDURAL PIXEL ART IN BROWSER</div>
+<h1>Pixel<span>Forge</span></h1>
+<p>Generate infinite game sprites, textures, icons, and pixel art. 100% procedural. No AI API. No signup. Runs in your browser. Free forever.</p>
+</div>
+
+<div class="container">
+
+<div class="controls">
+<div class="section-title">Quick Presets</div>
+<div class="preset-grid" id="presets"></div>
+
+<div class="section-title" style="margin-top:16px">Custom Generation</div>
+<div class="control-grid">
+<div class="control">
+<label>Asset Type</label>
+<select id="type">
+<option value="character">Character / Sprite</option>
+<option value="creature">Creature / Monster</option>
+<option value="weapon">Weapon / Item</option>
+<option value="tile">Tile / Texture</option>
+<option value="icon">Icon / Emblem</option>
+<option value="space">Spaceship</option>
+<option value="tree">Tree / Plant</option>
+<option value="building">Building / Structure</option>
+</select>
+</div>
+<div class="control">
+<label>Style</label>
+<select id="style">
+<option value="fantasy">Fantasy (8-bit)</option>
+<option value="scifi">Sci-Fi (Neon)</option>
+<option value="dark">Dark Souls (Gritty)</option>
+<option value="cute">Cute (Pastel)</option>
+<option value="retro">Retro (NES)</option>
+<option value="cyberpunk">Cyberpunk</option>
+</select>
+</div>
+<div class="control">
+<label>Canvas Size</label>
+<select id="size">
+<option value="16">16x16</option>
+<option value="24">24x24</option>
+<option value="32" selected>32x32</option>
+<option value="48">48x48</option>
+<option value="64">64x64</option>
+</select>
+</div>
+<div class="control">
+<label>Color Palette</label>
+<select id="palette">
+<option value="auto">Auto (random)</option>
+<option value="fire">Fire (red/orange)</option>
+<option value="ice">Ice (blue/cyan)</option>
+<option value="nature">Nature (green/brown)</option>
+<option value="dark">Dark (purple/black)</option>
+<option value="gold">Gold (yellow/orange)</option>
+<option value="rainbow">Rainbow</option>
+<option value="monochrome">Monochrome</option>
+</select>
+</div>
+<div class="control">
+<label>Symmetry</label>
+<select id="symmetry">
+<option value="h" selected>Horizontal</option>
+<option value="v">Vertical</option>
+<option value="both">Both (4-way)</option>
+<option value="none">None</option>
+</select>
+</div>
+<div class="control">
+<label>Detail Level: <span id="detailVal">5</span></label>
+<input type="range" id="detail" min="1" max="10" value="5" oninput="document.getElementById('detailVal').textContent=this.value">
+</div>
+</div>
+
+<button class="btn btn-gen" onclick="generate()">🎨 Generate Sprite</button>
+</div>
+
+<div class="canvas-container">
+<div class="section-title">Generated Asset</div>
+<canvas id="spriteCanvas" width="256" height="256"></canvas>
+<div class="canvas-controls">
+<button class="btn-sm" onclick="downloadPNG()">📥 Download PNG</button>
+<button class="btn-sm" onclick="downloadSprite()">📥 Download Sprite Sheet</button>
+<button class="btn-sm" onclick="copyDataURI()">📋 Copy as Data URI</button>
+<button class="btn-sm" onclick="generate()">🎲 Regenerate</button>
+</div>
+</div>
+
+<div class="canvas-container">
+<div class="section-title">Gallery (last 12 generated)</div>
+<div class="gallery" id="gallery">
+<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:20px">Generate sprites to build your gallery. Click any to download.</div>
+</div>
+</div>
+
+</div>
+
+<footer><p><a href="https://chiefgngs-prog.github.io/freetools/devbox/">DevBox</a> | <a href="https://chiefgngs-prog.github.io/freetools/">More Tools</a></p></footer>
+<div class="toast" id="toast">Done!</div>
+
+<script>
+// PALETTES
+const palettes={
+fire:['#1a0500','#3d0c00','#7a1f00','#cc4400','#ff6600','#ff9900','#ffcc00','#ffff66'],
+ice:['#001a1a','#003d3d','#006666','#009999','#00cccc','#33ffff','#99ffff','#ccffff'],
+nature:['#0a1a0a','#1a3d1a','#2d5a2d','#4d8c4d','#6fbf6f','#8fff8f','#bfffbf','#e0ffe0'],
+dark:['#0a0015','#150028','#2a0048','#480070','#6b00a3','#8f00d4','#b400ff','#dd66ff'],
+gold:['#1a1500','#3d3300','#7a6600','#cc9900','#ffcc00','#ffe066','#fff399','#ffffcc'],
+rainbow:['#ff0000','#ff6600','#ffcc00','#00ff00','#00ccff','#0066ff','#9900ff','#ff00ff'],
+monochrome:['#000000','#222222','#444444','#666666','#888888','#aaaaaa','#cccccc','#ffffff'],
+fantasy:['#2a1a4a','#4a2a6a','#6a3a8a','#8a5aaa','#aa7aca','#ff6b6b','#4ecdc4','#ffe66d'],
+scifi:['#001233','#003566','#0066cc','#00aaff','#33ddff','#00ffff','#88ffff','#ddffff'],
+cute:['#ffd6e0','#ff9ec7','#c9a7ff','#a7d8ff','#b8ffd9','#ffe6a7','#ffc4a7','#e0a7ff'],
+retro:['#7c3f00','#c84c00','#f8a058','#e40058','#909090','#58d854','#58b8f8','#f8f8f8'],
+cyberpunk:['#0a0015','#ff006e','#8338ec','#3a86ff','#06ffa5','#ffbe0b','#fb5607','#ffffff']
+};
+
+// STYLE -> PALETTE MAPPING
+const stylePalette={
+fantasy:'fantasy',scifi:'scifi',dark:'dark',cute:'cute',retro:'retro',cyberpunk:'cyberpunk'
+};
+
+// PRESETS
+const presets=[
+{type:'character',style:'fantasy',name:'Warrior'},
+{type:'creature',style:'dark',name:'Demon'},
+{type:'creature',style:'fantasy',name:'Dragon'},
+{type:'weapon',style:'gold',name:'Sword'},
+{type:'weapon',style:'fire',name:'Fire Axe'},
+{type:'weapon',style:'ice',name:'Ice Staff'},
+{type:'space',style:'scifi',name:'Fighter'},
+{type:'space',style:'cyberpunk',name:'Cyber Ship'},
+{type:'tree',style:'nature',name:'Oak Tree'},
+{type:'tree',style:'dark',name:'Dead Tree'},
+{type:'building',style:'retro',name:'Castle'},
+{type:'building',style:'cyberpunk',name:'Cyber Tower'},
+{type:'icon',style:'gold',name:'Gold Coin'},
+{type:'icon',style:'fire',name:'Fire Gem'},
+{type:'icon',style:'ice',name:'Ice Crystal'},
+{type:'tile',style:'dark',name:'Stone Floor'},
+];
+
+const presetEl=document.getElementById('presets');
+presets.forEach((p,i)=>{
+const div=document.createElement('div');
+div.className='preset';
+const emoji={character:'⚔️',creature:'🐲',weapon:'🗡️',space:'🚀',tree:'🌳',building:'🏰',icon:'💎',tile:'🧱'}[p.type]||'🎮';
+div.innerHTML=`<div class="emoji">${emoji}</div><div class="name">${p.name}</div>`;
+div.onclick=()=>{
+document.getElementById('type').value=p.type;
+document.getElementById('style').value=p.style;
+generate();
+};
+presetEl.appendChild(div);
+});
+
+// CANVAS
+const canvas=document.getElementById('spriteCanvas');
+const ctx=canvas.getContext('2d');
+const gallery=[];
+const GRID=32;
+const PIXEL=canvas.width/GRID;
+
+let currentSprite=null;
+
+function generate(){
+const type=document.getElementById('type').value;
+const style=document.getElementById('style').value;
+const size=parseInt(document.getElementById('size').value);
+const palName=document.getElementById('palette').value==='auto'?
+(stylePalette[style]||'fantasy'):document.getElementById('palette').value;
+const palette=palettes[palName]||palettes.fantasy;
+const symmetry=document.getElementById('symmetry').value;
+const detail=parseInt(document.getElementById('detail').value);
+
+// Create pixel grid
+const grid=[];
+for(let y=0;y<size;y++){
+grid[y]=[];
+for(let x=0;x<size;x++){
+grid[y][x]=null;
+}
+}
+
+// Generate based on type
+generateShape(grid,size,type,palette,detail,symmetry);
+
+// Apply symmetry
+applySymmetry(grid,size,symmetry);
+
+// Render
+renderGrid(grid,size);
+currentSprite={grid:grid,size:size};
+
+// Add to gallery
+addToGallery(grid,size);
+}
+
+function generateShape(grid,size,type,palette,detail,symmetry){
+const half=Math.floor(size/2);
+const center=size/2;
+const fillProb=0.3+detail*0.05;
+
+// Seeded random based on type
+let seed=Math.random()*1000;
+
+switch(type){
+case 'character':
+// Head + body shape
+drawEllipse(grid,center,center*0.4,size*0.15,palette);
+drawEllipse(grid,center,center*1.1,size*0.2,size*0.3,palette);
+// Arms
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+if(Math.abs(x-center*0.6)<2&&y>center*0.8&&y<center*1.4){
+if(Math.random()<fillProb)grid[y][x]=pickColor(palette);
+}
+}
+}
+break;
+
+case 'creature':
+// Organic blob with spikes
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+const dx=x-center;
+const dy=y-center;
+const dist=Math.sqrt(dx*dx+dy*dy);
+const angle=Math.atan2(dy,dx);
+const wobble=Math.sin(angle*6+seed)*3+Math.cos(angle*3+seed)*2;
+const radius=center*0.6+wobble;
+if(dist<radius&&Math.random()<fillProb+0.2){
+grid[y][x]=pickColor(palette,dist/radius);
+}
+}
+}
+// Eyes
+const eyeY=Math.floor(center*0.7);
+const eyeX=Math.floor(center*0.6);
+if(eyeY<size&&eyeX<half){
+grid[eyeY][eyeX]=palette[palette.length-1];
+if(eyeY+1<size)grid[eyeY+1][eyeX]=palette[0];
+}
+break;
+
+case 'weapon':
+// Sword/Axe shape
+const bladeW=Math.max(2,Math.floor(size*0.1));
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+// Blade
+if(x<bladeW&&y<size*0.7&&y>size*0.1){
+const taper=1-Math.abs(x-bladeW/2)/(bladeW/2+1);
+if(Math.random()<fillProb+0.3*taper){
+grid[y][x]=pickColor(palette,0.3+taper*0.5);
+}
+}
+// Handle
+if(y>size*0.65&&y<size*0.9&&x<bladeW+1){
+if(Math.random()<fillProb+0.2){
+grid[y][x]=palette[1]||palette[0];
+}
+}
+}
+}
+// Crossguard
+for(let x=0;x<half;x++){
+if(x<bladeW+4&&Math.abs(y-size*0.65)<1){
+if(Math.random()<fillProb+0.3)grid[Math.floor(size*0.65)][x]=palette[3]||palette[0];
+}
+}
+break;
+
+case 'space':
+// Spaceship triangle
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+const progress=y/size;
+const maxWidth=progress*half*0.8+1;
+if(x<maxWidth&&y>size*0.1){
+if(Math.random()<fillProb+0.2){
+const shade=progress;
+grid[y][x]=pickColor(palette,shade);
+}
+}
+}
+}
+// Cockpit
+const cpY=Math.floor(size*0.3);
+const cpX=Math.floor(half*0.3);
+if(cpY<size&&cpX<half){
+grid[cpY][cpX]=palette[palette.length-1];
+}
+break;
+
+case 'tree':
+// Trunk
+const trunkW=Math.max(1,Math.floor(size*0.06));
+for(let y=Math.floor(size*0.4);y<size;y++){
+for(let x=0;x<half;x++){
+if(x<trunkW&&Math.random()<0.8){
+grid[y][x]=palette[1]||palette[2]||'#4d3d2d';
+}
+}
+}
+// Canopy
+drawEllipse(grid,center,center*0.5,size*0.35,size*0.3,palette);
+break;
+
+case 'building':
+// Structure with roof
+const wallH=Math.floor(size*0.6);
+const wallW=Math.floor(half*0.7);
+for(let y=Math.floor(size*0.3);y<size;y++){
+for(let x=0;x<wallW;x++){
+if(Math.random()<fillProb+0.2){
+grid[y][x]=palette[2]||palette[3]||palette[0];
+}
+}
+}
+// Roof (triangle)
+for(let y=0;y<size*0.3;y++){
+const w=((size*0.3-y)/(size*0.3))*wallW;
+for(let x=0;x<w;x++){
+if(Math.random()<fillProb+0.2){
+grid[y][x]=palette[1]||palette[0];
+}
+}
+}
+// Windows
+for(let y=size*0.45;y<size*0.55;y++){
+for(let x=2;x<5&&x<wallW;x++){
+if(Math.random()<0.7)grid[Math.floor(y)][x]=palette[palette.length-1];
+}
+}
+break;
+
+case 'icon':
+// Geometric gem/crystal shape
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+const dx=x-center;
+const dy=y-center;
+const dist=Math.sqrt(dx*dx+dy*dy);
+const angle=Math.atan2(dy,dx);
+// Diamond shape
+const diamondR=Math.abs(dx)+Math.abs(dy);
+if(diamondR<center*0.7&&Math.random()<fillProb+0.15){
+grid[y][x]=pickColor(palette,diamondR/(center*0.7));
+}
+}
+}
+break;
+
+case 'tile':
+// Repeating texture pattern
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+const n=noise(x*0.3,y*0.3,seed);
+if(n>0.4){
+const shade=(n-0.4)/0.6;
+grid[y][x]=pickColor(palette,shade);
+}
+}
+}
+break;
+}
+
+// Add noise/detail
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+if(grid[y][x]&&Math.random()<(detail/100)){
+grid[y][x]=pickColor(palette,Math.random());
+}
+}
+}
+}
+
+function noise(x,y,seed){
+return Math.abs(Math.sin(x*12.9898+y*78.233+seed)*43758.5453)%1;
+}
+
+function drawEllipse(grid,cx,cy,rx,ry,palette){
+const size=grid.length;
+for(let y=0;y<size;y++){
+for(let x=0;x<size;x++){
+if(x>=size/2)continue;
+const dx=(x-cx)/rx;
+const dy=(y-cy)/ry;
+const dist=Math.sqrt(dx*dx+dy*dy);
+if(dist<1&&Math.random()<0.7){
+grid[y][x]=pickColor(palette,dist);
+}
+}
+}
+}
+
+function pickColor(palette,shade){
+if(shade===undefined)shade=Math.random();
+const idx=Math.floor(shade*palette.length);
+return palette[Math.min(idx,palette.length-1)];
+}
+
+function applySymmetry(grid,size,symmetry){
+const half=Math.floor(size/2);
+for(let y=0;y<size;y++){
+for(let x=0;x<half;x++){
+const mirrorX=size-1-x;
+if(symmetry==='h'||symmetry==='both'){
+grid[y][mirrorX]=grid[y][x];
+}
+if(symmetry==='v'||symmetry==='both'){
+const mirrorY=size-1-y;
+grid[mirrorY][x]=grid[y][x];
+if(symmetry==='both')grid[mirrorY][mirrorX]=grid[y][x];
+}
+}
+}
+}
+
+function renderGrid(grid,size){
+const pixelSize=canvas.width/size;
+ctx.clearRect(0,0,canvas.width,canvas.height);
+// Dark background
+ctx.fillStyle='#0a0a12';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+for(let y=0;y<size;y++){
+for(let x=0;x<size;x++){
+if(grid[y][x]){
+ctx.fillStyle=grid[y][x];
+ctx.fillRect(x*pixelSize,y*pixelSize,pixelSize+0.5,pixelSize+0.5);
+}
+}
+}
+}
+
+function addToGallery(grid,size){
+if(gallery.length>=12)gallery.shift();
+gallery.push({grid:grid,size:size});
+
+const galEl=document.getElementById('gallery');
+galEl.innerHTML='';
+gallery.forEach((item,i)=>{
+const div=document.createElement('div');
+div.className='gallery-item';
+const c=document.createElement('canvas');
+c.width=64;c.height=64;
+const cx=c.getContext('2d');
+const ps=64/item.size;
+cx.fillStyle='#000';
+cx.fillRect(0,0,64,64);
+for(let y=0;y<item.size;y++){
+for(let x=0;x<item.size;x++){
+if(item.grid[y][x]){
+cx.fillStyle=item.grid[y][x];
+cx.fillRect(x*ps,y*ps,ps+0.5,ps+0.5);
+}
+}
+}
+div.appendChild(c);
+div.onclick=()=>{
+currentSprite=item;
+renderGrid(item.grid,item.size);
+};
+div.innerHTML+='<div class="label">Click to view</div>';
+div.insertBefore(c,div.firstChild);
+galEl.appendChild(div);
+});
+}
+
+function downloadPNG(){
+const link=document.createElement('a');
+link.download='pixelforge-sprite.png';
+link.href=canvas.toDataURL();
+link.click();
+showToast('Downloaded!');
+}
+
+function downloadSprite(){
+// Export at native pixel size
+if(!currentSprite)return;
+const c=document.createElement('canvas');
+c.width=currentSprite.size;
+c.height=currentSprite.size;
+const cx=c.getContext('2d');
+for(let y=0;y<currentSprite.size;y++){
+for(let x=0;x<currentSprite.size;x++){
+if(currentSprite.grid[y][x]){
+cx.fillStyle=currentSprite.grid[y][x];
+cx.fillRect(x,y,1,1);
+}
+}
+}
+const link=document.createElement('a');
+link.download='pixelforge-sprite-'+currentSprite.size+'x'+currentSprite.size+'.png';
+link.href=c.toDataURL();
+link.click();
+showToast('Sprite sheet downloaded!');
+}
+
+function copyDataURI(){
+const uri=canvas.toDataURL();
+navigator.clipboard.writeText(uri).then(()=>showToast('Data URI copied!'));
+}
+
+function showToast(msg){
+const t=document.getElementById('toast');
+t.textContent=msg;
+t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// Generate on load
+generate();
+</script>
+</body>
+</html>
