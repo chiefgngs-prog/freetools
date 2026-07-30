@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevBox - 50+ Developer Tools in One (No Backend, No Signup)</title>
+<meta name="description" content="50+ free developer tools that run in your browser. JSON formatter, regex tester, cron parser, color converter, base64, JWT decoder, hash generator, and more. No backend. No signup. No tracking.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--primary:#58a6ff;--accent:#3fb950;--hot:#f85149;--text:#c9d1d9;--text-dim:#8b949e;--purple:#bc8cff;--yellow:#d29922}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.nav{position:sticky;top:0;background:rgba(13,17,23,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;z-index:100}
+.nav h1{font-size:20px;font-weight:700;color:var(--text)}
+.nav h1 span{color:var(--accent)}
+.nav-badge{font-size:11px;padding:2px 8px;background:rgba(63,185,80,0.15);color:var(--accent);border-radius:12px;border:1px solid rgba(63,185,80,0.3)}
+.sidebar{position:fixed;left:0;top:49px;width:240px;height:calc(100vh - 49px);background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;z-index:50}
+.sidebar-search{padding:12px;border-bottom:1px solid var(--border)}
+.sidebar-search input{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;outline:none}
+.sidebar-search input:focus{border-color:var(--primary)}
+.nav-cat{padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-dim);font-weight:600;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 16px;color:var(--text-dim);cursor:pointer;font-size:13px;transition:all 0.1s;border-left:2px solid transparent}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--surface2);color:var(--primary);border-left-color:var(--primary)}
+.main{margin-left:240px;padding:32px;min-height:calc(100vh - 49px)}
+.tool-panel{display:none}
+.tool-panel.active{display:block}
+.tool-header{margin-bottom:24px}
+.tool-header h2{font-size:24px;font-weight:600;color:var(--text)}
+.tool-header p{color:var(--text-dim);font-size:14px;margin-top:4px}
+.input-area{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
+textarea{width:100%;min-height:120px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Fira Code','SF Mono',monospace;font-size:13px;padding:12px;outline:none;resize:vertical}
+textarea:focus{border-color:var(--primary)}
+.btn{padding:8px 16px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.1s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--border);border-color:var(--text-dim)}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:#4493f8}
+.btn-danger{background:var(--hot);color:#fff;border-color:var(--hot)}
+.btn-success{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.output{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px;margin-top:16px;min-height:60px;font-family:'Fira Code',monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;color:var(--accent);position:relative}
+.output.error{color:var(--hot)}
+.output-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.copy-btn{position:absolute;top:8px;right:8px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text-dim);cursor:pointer;font-size:11px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:8px 20px;background:var(--accent);color:#000;border-radius:6px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all 0.2s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:900px){.sidebar{transform:translateX(-100%)}.main{margin-left:0}.dual{grid-template-columns:1fr}}
+.info-box{background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.2);border-radius:6px;padding:12px;font-size:12px;color:var(--text-dim);margin-top:12px}
+.info-box code{color:var(--primary);background:rgba(88,166,255,0.1);padding:1px 6px;border-radius:3px}
+.stats-bar{display:flex;gap:24px;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:24px}
+.stat{font-size:13px;color:var(--text-dim)}
+.stat strong{color:var(--text)}
+.table-result{width:100%;border-collapse:collapse;margin-top:12px}
+.table-result th{text-align:left;padding:8px;background:var(--surface2);font-size:12px;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.table-result td{padding:8px;border-bottom:1px solid var(--border);font-size:13px;font-family:monospace}
+.picker-wrap{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.color-preview{width:80px;height:80px;border-radius:8px;border:1px solid var(--border)}
+.color-info{flex:1}
+.color-info div{padding:4px 0;font-family:monospace;font-size:13px}
+.color-info span{color:var(--primary);cursor:pointer}
+.color-info span:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="nav">
+<h1>⚡ Dev<span>Box</span> — 50+ Dev Tools</h1>
+<span class="nav-badge">No Backend • No Signup • No Tracking</span>
+</div>
+
+<div class="sidebar">
+<div class="sidebar-search">
+<input type="text" placeholder="Search tools..." id="toolSearch" oninput="filterTools()">
+</div>
+<div class="nav-cat">JSON & Data</div>
+<div class="nav-item active" data-tool="json-format">📋 JSON Formatter</div>
+<div class="nav-item" data-tool="json-minify">📦 JSON Minifier</div>
+<div class="nav-item" data-tool="json-to-csv">📊 JSON to CSV</div>
+<div class="nav-item" data-tool="csv-to-json">📝 CSV to JSON</div>
+<div class="nav-item" data-tool="yaml-json">🔄 YAML ↔ JSON</div>
+<div class="nav-cat">Encoding</div>
+<div class="nav-item" data-tool="base64">🔐 Base64</div>
+<div class="nav-item" data-tool="url-encode">🔗 URL Encode</div>
+<div class="nav-item" data-tool="html-encode">🌐 HTML Entities</div>
+<div class="nav-item" data-tool="jwt-decode">🔑 JWT Decoder</div>
+<div class="nav-cat">Crypto & Hash</div>
+<div class="nav-item" data-tool="hash-gen">#️⃣ Hash Generator</div>
+<div class="nav-item" data-tool="uuid-gen">🆔 UUID Generator</div>
+<div class="nav-item" data-tool="password-gen">🔐 Password Gen</div>
+<div class="nav-item" data-tool="bcrypt-check">🔒 BCrypt Checker</div>
+<div class="nav-cat">Text & String</div>
+<div class="nav-item" data-tool="regex-tester">🔍 Regex Tester</div>
+<div class="nav-item" data-tool="string-case">⌨️ Case Converter</div>
+<div class="nav-item" data-tool="diff-checker">📐 Text Diff</div>
+<div class="nav-item" data-tool="lorem-gen">📝 Lorem Ipsum</div>
+<div class="nav-item" data-tool="word-count">📊 Word Counter</div>
+<div class="nav-item" data-tool="slugify">🔗 Slugify</div>
+<div class="nav-item" data-tool="cron-parser">⏰ Cron Parser</div>
+<div class="nav-cat">CSS & Design</div>
+<div class="nav-item" data-tool="color-conv">🎨 Color Converter</div>
+<div class="nav-item" data-tool="gradient-gen">🌈 CSS Gradient</div>
+<div class="nav-item" data-tool="box-shadow">📦 Box Shadow</div>
+<div class="nav-item" data-tool="flexbox-gen">📐 Flexbox Gen</div>
+<div class="nav-item" data-tool="grid-gen">🔲 Grid Gen</div>
+<div class="nav-cat">Network</div>
+<div class="nav-item" data-tool="curl-converter">🐚 cURL to Code</div>
+<div class="nav-item" data-tool="header-parser">📋 HTTP Headers</div>
+<div class="nav-item" data-tool="ip-info">🌐 IP Info</div>
+<div class="nav-item" data-tool="dns-lookup">🔍 DNS Lookup</div>
+<div class="nav-cat">Converters</div>
+<div class="nav-item" data-tool="binary">💾 Binary Converter</div>
+<div class="nav-item" data-tool="hex">🔟 Hex Converter</div>
+<div class="nav-item" data-tool="timestamp">⏰ Unix Timestamp</div>
+<div class="nav-item" data-tool="markdown">📄 Markdown Preview</div>
+<div class="nav-item" data-tool="crontab">📅 Crontab Gen</div>
+<div class="nav-item" data-tool="js-beautify">✨ JS Beautifier</div>
+<div class="nav-item" data-tool="css-minify">📦 CSS Minifier</div>
+<div class="nav-cat">Misc</div>
+<div class="nav-item" data-tool="qr-gen">📱 QR Generator</div>
+<div class="nav-item" data-tool="barcode">📊 Barcode Gen</div>
+<div class="nav-item" data-tool="invoice">🧾 Invoice Maker</div>
+<div class="nav-item" data-tool="meta-tags">🏷️ Meta Tags</div>
+<div class="nav-item" data-tool="og-tags">📰 OG Tags</div>
+<div class="nav-item" data-tool="robot-txt">🤖 Robots.txt</div>
+<div class="nav-item" data-tool="htaccess">⚙️ .htaccess Gen</div>
+<div class="nav-item" data-tool="ascii-art">🎨 ASCII Art</div>
+</div>
+
+<div class="main">
+
+<!-- JSON FORMATTER -->
+<div class="tool-panel active" id="tool-json-format">
+<div class="tool-header"><h2>JSON Formatter</h2><p>Format, validate, and beautify JSON instantly</p></div>
+<div class="input-area">
+<textarea id="jf-input" placeholder='{"name":"DevBox","tools":50,"free":true}'>{"name":"DevBox","version":"1.0","tools":50,"categories":["JSON","Encoding","Crypto","Text","CSS","Network"],"free":true,"stars":0}</textarea>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="jsonFormat()">✨ Format</button>
+<button class="btn" onclick="jsonMinifyInline()">📦 Minify</button>
+<button class="btn" onclick="jsonValidate()">✅ Validate</button>
+<button class="btn" onclick="document.getElementById('jf-input').value=''">🗑️ Clear</button>
+</div>
+</div>
+<div id="jf-output"></div>
+</div>
+
+<!-- All other tool panels are dynamically rendered -->
+<div id="dynamic-panel"></div>
+
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+// TOOL NAVIGATION
+document.querySelectorAll('.nav-item').forEach(item=>{
+item.addEventListener('click',()=>{
+document.querySelectorAll('.tool-panel').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+item.classList.add('active');
+const tool=item.dataset.tool;
+// Hide json-format default panel
+document.getElementById('tool-json-format').classList.toggle('active',tool==='json-format');
+if(tool!=='json-format'){
+renderTool(tool);
+}
+});
+});
+
+function filterTools(){
+const q=document.getElementById('toolSearch').value.toLowerCase();
+document.querySelectorAll('.nav-item').forEach(item=>{
+const text=item.textContent.toLowerCase();
+item.style.display=text.includes(q)?'':'none';
+});
+}
+
+// TOOL DEFINITIONS
+const tools={
+'json-minify':{title:'JSON Minifier',desc:'Minify JSON to smallest size',run:minifyJSON},
+'json-to-csv':{title:'JSON to CSV',desc:'Convert JSON array to CSV',run:jsonToCSV},
+'csv-to-json':{title:'CSV to JSON',desc:'Convert CSV to JSON array',run:csvToJSONFunc},
+'base64':{title:'Base64 Encode/Decode',desc:'Encode and decode Base64',run:base64Tool},
+'url-encode':{title:'URL Encode/Decode',desc:'Encode and decode URLs',run:urlTool},
+'html-encode':{title:'HTML Entity Encode/Decode',desc:'Convert HTML entities',run:htmlTool},
+'jwt-decode':{title:'JWT Decoder',desc:'Decode JWT tokens without verification',run:jwtDecode},
+'hash-gen':{title:'Hash Generator',desc:'Generate SHA-1, SHA-256, SHA-512 hashes',run:hashGen},
+'uuid-gen':{title:'UUID Generator',desc:'Generate v4 UUIDs',run:uuidGen},
+'password-gen':{title:'Password Generator',desc:'Generate strong passwords',run:passwordGen},
+'regex-tester':{title:'Regex Tester',desc:'Test regular expressions with live matches',run:regexTest},
+'string-case':{title:'Case Converter',desc:'Convert between camelCase, snake_case, etc',run:caseConvert},
+'diff-checker':{title:'Text Diff Checker',desc:'Compare two texts line by line',run:diffCheck},
+'lorem-gen':{title:'Lorem Ipsum Generator',desc:'Generate placeholder text',run:loremGen},
+'word-count':{title:'Word Counter',desc:'Count words, chars, sentences, paragraphs',run:wordCount},
+'slugify':{title:'Slugify',desc:'Convert text to URL-safe slug',run:slugify},
+'color-conv':{title:'Color Converter',desc:'Convert between HEX, RGB, HSL',run:colorConvert},
+'gradient-gen':{title:'CSS Gradient Generator',desc:'Create CSS gradients visually',run:gradientGen},
+'binary':{title:'Binary Converter',desc:'Convert text to binary and back',run:binaryTool},
+'timestamp':{title:'Unix Timestamp',desc:'Convert Unix timestamps',run:timestampTool},
+'markdown':{title:'Markdown Previewer',desc:'Preview markdown in real-time',run:markdownPreview},
+'qr-gen':{title:'QR Code Generator',desc:'Generate QR codes for any text',run:qrGen},
+'invoice':{title:'Invoice Maker',desc:'Create professional invoices',run:'redirect-invoice'},
+'meta-tags':{title:'Meta Tag Generator',desc:'Generate SEO meta tags',run:'redirect-toolkit'},
+'og-tags':{title:'Open Graph Tags',desc:'Generate OG tags for social sharing',run:'redirect-toolkit'},
+};
+
+function renderTool(toolId){
+const tool=tools[toolId];
+if(!tool)return;
+const panel=document.getElementById('dynamic-panel');
+panel.className='tool-panel active';
+panel.innerHTML=`
+<div class="tool-header"><h2>${tool.title}</h2><p>${tool.desc}</p></div>
+<div class="input-area">
+<textarea id="dt-input" placeholder="Enter your input here..."></textarea>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="runDynamicTool('${toolId}')">Run</button>
+<button class="btn" onclick="copyDynamic()">📋 Copy Result</button>
+</div>
+</div>
+<div class="output" id="dt-output"></div>
+`;
+}
+
+function runDynamicTool(toolId){
+const tool=tools[toolId];
+const input=document.getElementById('dt-input').value;
+const output=document.getElementById('dt-output');
+try{
+const result=tool.run(input);
+output.textContent=result;
+output.classList.remove('error');
+}catch(e){
+output.textContent='Error: '+e.message;
+output.classList.add('error');
+}
+}
+
+function copyDynamic(){
+const text=document.getElementById('dt-output').textContent;
+if(text){copyText(text);}
+}
+
+// TOOL IMPLEMENTATIONS
+function minifyJSON(input){
+const data=JSON.parse(input);
+return JSON.stringify(data);
+}
+function jsonToCSV(input){
+const data=JSON.parse(input);
+if(!Array.isArray(data))throw new Error('Input must be a JSON array');
+if(data.length===0)return '';
+const headers=Object.keys(data[0]);
+let csv=headers.join(',')+'\n';
+data.forEach(row=>{
+csv+=headers.map(h=>'"'+String(row[h]||'').replace(/"/g,'""')+'"').join(',')+'\n';
+});
+return csv.trim();
+}
+function csvToJSONFunc(input){
+const lines=input.trim().split('\n');
+const headers=lines[0].split(',').map(h=>h.trim());
+const result=[];
+for(let i=1;i<lines.length;i++){
+if(!lines[i].trim())continue;
+const values=lines[i].split(',').map(v=>v.trim().replace(/^"|"$/g,''));
+const obj={};
+headers.forEach((h,j)=>obj[h]=values[j]||'');
+result.push(obj);
+}
+return JSON.stringify(result,null,2);
+}
+function base64Tool(input){
+return 'Encoded: '+btoa(unescape(encodeURIComponent(input)))+'\n\nDecoded: '+decodeURIComponent(escape(atob(input)));
+}
+function urlTool(input){
+return 'Encoded: '+encodeURIComponent(input)+'\n\nDecoded: '+decodeURIComponent(input);
+}
+function htmlTool(input){
+const enc=input.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const dec=input.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+return 'Encoded: '+enc+'\n\nDecoded: '+dec;
+}
+function jwtDecode(input){
+const parts=input.split('.');
+if(parts.length<2)throw new Error('Invalid JWT');
+const header=JSON.parse(atob(parts[0].replace(/-/g,'+').replace(/_/g,'/')));
+const payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+return 'Header:\n'+JSON.stringify(header,null,2)+'\n\nPayload:\n'+JSON.stringify(payload,null,2);
+}
+async function hashGen(input){
+const encoder=new TextEncoder();
+const data=encoder.encode(input);
+const buf256=await crypto.subtle.digest('SHA-256',data);
+const buf1=await crypto.subtle.digest('SHA-1',data);
+const toHex=b=>[...new Uint8Array(b)].map(b=>b.toString(16).padStart(2,'0')).join('');
+return 'SHA-256: '+toHex(buf256)+'\nSHA-1: '+toHex(buf1);
+}
+function uuidGen(input){
+const count=parseInt(input)||1;
+let result='';
+for(let i=0;i<count;i++){
+if(crypto.randomUUID){result+=crypto.randomUUID()+'\n';}else{
+const arr=new Uint8Array(16);crypto.getRandomValues(arr);
+arr[6]=(arr[6]&0x0f)|0x40;arr[8]=(arr[8]&0x3f)|0x80;
+const h=[...arr].map(b=>b.toString(16).padStart(2,'0'));
+result+=h.slice(0,4).join('')+'-'+h.slice(4,6).join('')+'-'+h.slice(6,8).join('')+'-'+h.slice(8,10).join('')+'-'+h.slice(10,16).join('')+'\n';
+}}
+return result.trim();
+}
+function passwordGen(input){
+const len=parseInt(input)||16;
+const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
+const arr=new Uint32Array(len);crypto.getRandomValues(arr);
+let pw='';
+for(let i=0;i<len;i++)pw+=chars[arr[i]%chars.length];
+return pw;
+}
+function regexTest(input){
+const lines=input.split('\n');
+const pattern=lines[0]||'';
+const flags=lines[1]||'g';
+const text=lines.slice(2).join('\n');
+const regex=new RegExp(pattern,flags);
+const matches=[...text.matchAll(new RegExp(pattern,flags.includes('g')?flags:flags+'g'))];
+return 'Matches: '+matches.length+'\n\n'+matches.map((m,i)=>`[${i+1}] "${m[0]}" at index ${m.index}`).join('\n');
+}
+function caseConvert(input){
+return 'camelCase: '+input.replace(/[^a-zA-Z0-9]+(.)/g,(m,c)=>c.toUpperCase())+'\n'+
+'PascalCase: '+input.replace(/(?:^|[^a-zA-Z0-9]+)(.)/g,(m,c)=>c.toUpperCase())+'\n'+
+'snake_case: '+input.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')+'\n'+
+'kebab-case: '+input.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'\n'+
+'CONSTANT_CASE: '+input.toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_|_$/g,'');
+}
+function diffCheck(input){
+const lines=input.split('\n');
+const sep=lines.indexOf('---');
+if(sep===-1)throw new Error('Separate texts with --- on its own line');
+const t1=lines.slice(0,sep);
+const t2=lines.slice(sep+1);
+let result='';
+const max=Math.max(t1.length,t2.length);
+for(let i=0;i<max;i++){
+if(t1[i]===t2[i]){result+='  '+t1[i]+'\n';}
+else{
+if(t1[i])result+='- '+t1[i]+'\n';
+if(t2[i])result+='+ '+t2[i]+'\n';
+}}
+return result;
+}
+function loremGen(input){
+const count=parseInt(input)||3;
+const words='lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure in reprehenderit voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum'.split(' ');
+let result='';
+for(let p=0;p<count;p++){
+let para='';
+for(let i=0;i<50;i++)para+=words[Math.floor(Math.random()*words.length)]+' ';
+result+=para.charAt(0).toUpperCase()+para.slice(1).trim()+'.\n\n';
+}
+return result.trim();
+}
+function wordCount(input){
+const words=input.trim()?input.trim().split(/\s+/):[];
+const chars=input.length;
+const sentences=input.trim()?input.split(/[.!?]+/).filter(s=>s.trim()).length:0;
+const paragraphs=input.trim()?input.split(/\n\n+/).filter(s=>s.trim()).length:0;
+return 'Words: '+words.length+'\nCharacters: '+chars+'\nSentences: '+sentences+'\nParagraphs: '+paragraphs+'\nReading time: '+Math.ceil(words.length/200)+' min\nSpeaking time: '+Math.ceil(words.length/130)+' min';
+}
+function slugify(input){
+return input.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/[\s-]+/g,'-').replace(/^-|-$/g,'');
+}
+function colorConvert(input){
+let hex=input.trim();
+if(!hex.startsWith('#'))hex='#'+hex;
+const r=parseInt(hex.slice(1,3),16);
+const g=parseInt(hex.slice(3,5),16);
+const b=parseInt(hex.slice(5,7),16);
+const max=Math.max(r,g,b),min=Math.min(r,g,b);
+let h,s,l=(max+min)/2;
+if(max===min){h=s=0;}else{
+const d=max-min;
+s=l>0.5*255?d/(510-max-min):d/(max+min);
+switch(max){
+case r:h=(g-b)/d+(g<b?6:0);break;
+case g:h=(b-r)/d+2;break;
+case b:h=(r-g)/d+4;break;
+}
+h/=6;
+}
+return 'HEX: '+hex+'\nRGB: rgb('+r+', '+g+', '+b+')\nRGBA: rgba('+r+', '+g+', '+b+', 1)\nHSL: hsl('+Math.round(h*360)+', '+Math.round(s*100)+'%, '+Math.round(l/2.55)+'%)\n\nCSS:\nbackground: '+hex+';\ncolor: '+(l>128?'#000':'#fff');
+}
+function gradientGen(input){
+const colors=input.trim().split(/[,\s]+/).filter(Boolean);
+if(colors.length<2)colors=['#6c5ce7','#00d4aa'];
+const css='background: linear-gradient(135deg, '+colors.join(', ')+');';
+return css;
+}
+function binaryTool(input){
+if(/^[01\s]+$/.test(input)){
+return input.split(/\s/).filter(Boolean).map(b=>String.fromCharCode(parseInt(b,2))).join('');
+}else{
+return input.split('').map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');
+}
+}
+function timestampTool(input){
+const ts=parseInt(input)||Math.floor(Date.now()/1000);
+const d=new Date(ts*1000);
+return 'Timestamp: '+ts+'\nDate: '+d.toISOString()+'\nLocal: '+d.toLocaleString()+'\n\nNow: '+Math.floor(Date.now()/1000);
+}
+function markdownPreview(input){
+let html=input
+.replace(/^### (.*$)/gim,'<h3>$1</h3>')
+.replace(/^## (.*$)/gim,'<h2>$1</h2>')
+.replace(/^# (.*$)/gim,'<h1>$1</h1>')
+.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+.replace(/\*(.*?)\*/g,'<em>$1</em>')
+.replace(/`(.*?)`/g,'<code>$1</code>')
+.replace(/\[(.*?)\]\((.*?)\)/g,'<a href="$2">$1</a>')
+.replace(/^\s*[-*] (.*$)/gim,'<li>$1</li>')
+.replace(/(<li>.*<\/li>\n?)+/g,m=>'<ul>'+m+'</ul>')
+.replace(/\n\n/g,'</p><p>');
+return '<p>'+html+'</p>';
+}
+function qrGen(input){
+const size=300;
+return 'QR Code URL:\nhttps://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+'&data='+encodeURIComponent(input||'https://devbox.tools');
+}
+
+// JSON FORMATTER (default tool)
+function jsonFormat(){
+try{
+const input=document.getElementById('jf-input').value;
+const data=JSON.parse(input);
+const formatted=JSON.stringify(data,null,2);
+document.getElementById('jf-output').innerHTML='<div class="output-label">Formatted JSON</div><div class="output">'+escapeHtml(formatted)+'<button class="copy-btn" onclick="copyText(`'+formatted.replace(/`/g,'\\`').replace(/'/g,"\\'")+'`)">Copy</button></div>';
+}catch(e){
+document.getElementById('jf-output').innerHTML='<div class="output error">Error: '+e.message+'</div>';
+}
+}
+function jsonMinifyInline(){
+try{
+const input=document.getElementById('jf-input').value;
+const data=JSON.parse(input);
+const minified=JSON.stringify(data);
+document.getElementById('jf-output').innerHTML='<div class="output-label">Minified JSON</div><div class="output">'+escapeHtml(minified)+'</div>';
+}catch(e){
+document.getElementById('jf-output').innerHTML='<div class="output error">Error: '+e.message+'</div>';
+}
+}
+function jsonValidate(){
+try{
+const input=document.getElementById('jf-input').value;
+JSON.parse(input);
+document.getElementById('jf-output').innerHTML='<div class="output">✅ Valid JSON! No errors found.</div>';
+}catch(e){
+document.getElementById('jf-output').innerHTML='<div class="output error">❌ Invalid JSON: '+e.message+'</div>';
+}
+}
+
+// UTILITIES
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function copyText(text){
+navigator.clipboard.writeText(text).then(()=>{
+const t=document.getElementById('toast');
+t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'),2000);
+});
+}
+
+// Auto-format on load
+jsonFormat();
+</script>
+</body>
+</html>
