@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CommitMind - Git Commit Visualizer & Team Mind Map</title>
+<meta name="description" content="The only tool that turns your Git history into a visual mind map. See who changed what, when, and why. Paste any git log. Instant visualization.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--primary:#58a6ff;--accent:#3fb950;--hot:#f85149;--text:#c9d1d9;--text-dim:#8b949e;--purple:#bc8cff;--yellow:#d29922;--orange:#db6d28}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.header{text-align:center;padding:40px 20px 20px}
+.header h1{font-size:clamp(28px,5vw,42px);font-weight:800}
+.header h1 span{background:linear-gradient(135deg,var(--purple),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:var(--text-dim);max-width:500px;margin:8px auto 0}
+.badge{display:inline-block;padding:4px 12px;background:rgba(188,140,255,0.1);border:1px solid var(--purple);border-radius:12px;font-size:12px;color:var(--purple);margin-bottom:12px}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+.input-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.input-card h3{color:var(--accent);font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.input-card label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px;margin-top:12px}
+textarea{width:100%;min-height:120px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Fira Code',monospace;font-size:12px;padding:12px;outline:none;resize:vertical}
+textarea:focus{border-color:var(--primary)}
+.btn{padding:12px 24px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.1s}
+.btn-go{background:linear-gradient(135deg,var(--purple),var(--primary));color:#fff}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.viz-container{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;overflow-x:auto}
+svg{display:block;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:12px;color:var(--text-dim);margin-top:2px}
+.author-list{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
+.author-list h4{font-size:13px;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.author-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.author-row:last-child{border:none}
+.author-name{font-size:14px}
+.author-bar{flex:1;height:8px;background:var(--bg);border-radius:4px;margin:0 12px;overflow:hidden}
+.author-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:4px}
+.author-count{font-size:13px;color:var(--text-dim);min-width:40px;text-align:right}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:8px 20px;background:var(--accent);color:#000;border-radius:6px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all 0.2s}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+footer{text-align:center;padding:24px;color:#444;font-size:13px}
+footer a{color:var(--primary);text-decoration:none}
+.commits-list{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px}
+.commit-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.commit-item:last-child{border:none}
+.commit-hash{font-family:monospace;color:var(--purple);font-size:12px}
+.commit-author{color:var(--primary);font-size:12px}
+.commit-msg{color:var(--text);margin-top:2px}
+.commit-date{color:var(--text-dim);font-size:11px}
+.empty{text-align:center;padding:40px;color:var(--text-dim)}
+.empty .icon{font-size:48px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="badge">NOBODY ELSE HAS THIS</div>
+<h1>Commit<span>Mind</span></h1>
+<p>Turn your Git history into a visual mind map. See who changed what, when, and why. Paste any git log output. Instant visualization.</p>
+</div>
+
+<div class="container">
+
+<div class="input-card">
+<h3>Step 1: Generate Git Log</h3>
+<p style="color:var(--text-dim);font-size:13px;margin-bottom:12px">Run this in your repo:</p>
+<code style="display:block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;color:var(--accent)">git log --pretty=format:"%H|%an|%ae|%ad|%s" --date=short -50</code>
+<label>Step 2: Paste Output Here</label>
+<textarea id="gitlog" placeholder="abc1234|John Doe|john@email.com|2025-01-15|fix: resolve login bug
+def5678|Jane Smith|jane@email.com|2025-01-14|feat: add dark mode
+ghi9012|John Doe|john@email.com|2025-01-13|refactor: clean up utils"></textarea>
+<div class="btn-row">
+<button class="btn btn-go" onclick="visualize()">🧠 Visualize</button>
+<button class="btn btn-secondary" onclick="loadDemo()">📋 Load Demo Data</button>
+<button class="btn btn-secondary" onclick="document.getElementById('gitlog').value=''">🗑️ Clear</button>
+</div>
+</div>
+
+<div id="results">
+<div class="empty"><div class="icon">🧠</div>Paste your git log and hit Visualize to see your commit history as a mind map.</div>
+</div>
+
+</div>
+
+<footer><p><a href="https://chiefgngs-prog.github.io/freetools/devbox/">DevBox</a> | <a href="https://chiefgngs-prog.github.io/freetools/">More Tools</a></p></footer>
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+function loadDemo(){
+document.getElementById('gitlog').value=`a1b2c3d|Sarah Chen|sarah@dev.com|2025-07-28|feat: implement AI-powered search
+b2c3d4e|Mike Zhang|mike@dev.com|2025-07-28|fix: memory leak in image processor
+c3d4e5f|Sarah Chen|sarah@dev.com|2025-07-27|refactor: extract auth middleware
+d4e5f6a|Alex Rivera|alex@dev.com|2025-07-27|chore: update dependencies
+e5f6a7b|Sarah Chen|sarah@dev.com|2025-07-26|feat: add real-time notifications
+f6a7b8c|Mike Zhang|mike@dev.com|2025-07-26|fix: broken API endpoints after refactor
+a7b8c9d|Sarah Chen|sarah@dev.com|2025-07-25|refactor: modularize database layer
+b8c9d0e|Alex Rivera|alex@dev.com|2025-07-25|docs: update API documentation
+c9d0e1f|Sarah Chen|sarah@dev.com|2025-07-24|feat: add user analytics dashboard
+d0e1f2a|Mike Zhang|mike@dev.com|2025-07-24|fix: race condition in websocket handler
+e1f2a3b|Sarah Chen|sarah@dev.com|2025-07-23|perf: optimize database queries (3x faster)
+f2a3b4c|Alex Rivera|alex@dev.com|2025-07-23|test: add integration tests for payments
+a3b4c5d|Sarah Chen|sarah@dev.com|2025-07-22|feat: add Stripe payment integration
+b4c5d6e|Mike Zhang|mike@dev.com|2025-07-22|fix: CSS overflow on mobile
+c5d6e7f|Sarah Chen|sarah@dev.com|2025-07-21|feat: implement role-based access control`;
+visualize();
+}
+
+function visualize(){
+const raw=document.getElementById('gitlog').value.trim();
+if(!raw){alert('Paste your git log first!');return;}
+const commits=raw.split('\n').filter(l=>l.trim()).map(line=>{
+const parts=line.split('|');
+return{
+hash:parts[0]?parts[0].substring(0,7):'',
+author:parts[1]||'Unknown',
+email:parts[2]||'',
+date:parts[3]||'',
+message:parts[4]||''
+};
+});
+
+if(commits.length===0){alert('No valid commits found!');return;}
+
+// Stats
+const authors={};
+const types={feat:0,fix:0,refactor:0,chore:0,docs:0,test:0,perf:0,other:0};
+const dates={};
+
+commits.forEach(c=>{
+authors[c.author]=(authors[c.author]||0)+1;
+const firstWord=c.message.split(/[\s:]/)[0].toLowerCase();
+if(types.hasOwnProperty(firstWord))types[firstWord]++;
+else types.other++;
+if(c.date)dates[c.date]=(dates[c.date]||0)+1;
+});
+
+const authorCount=Object.keys(authors).length;
+const topAuthor=Object.entries(authors).sort((a,b)=>b[1]-a[1])[0];
+const dateRange=Object.keys(dates).length>0?
+`${Object.keys(dates).sort()[0]} to ${Object.keys(dates).sort().reverse()[0]}`:'N/A';
+
+// Build HTML
+let html='<div class="stats">';
+html+=statCard(commits.length,'Total Commits');
+html+=statCard(authorCount,'Authors');
+html+=statCard(types.feat||0,'Features');
+html+=statCard(types.fix||0,'Bug Fixes');
+html+=statCard(types.refactor||0,'Refactors');
+html+=statCard(dateRange.split(' to ')[0]||'N/A','First Commit');
+html+='</div>';
+
+// Author breakdown
+html+='<div class="author-list"><h4>👥 Author Breakdown</h4>';
+const maxCommits=Math.max(...Object.values(authors));
+Object.entries(authors).sort((a,b)=>b[1]-a[1]).forEach(([name,count])=>{
+const pct=(count/maxCommits)*100;
+html+=`<div class="author-row"><span class="author-name">${name}</span><div class="author-bar"><div class="author-fill" style="width:${pct}%"></div></div><span class="author-count">${count}</span></div>`;
+});
+html+='</div>';
+
+// Commit type breakdown
+html+='<div class="author-list"><h4>📋 Commit Types</h4>';
+const typeLabels={feat:'✨ Features',fix:'🐛 Bug Fixes',refactor:'♻️ Refactors',chore:'🔧 Maintenance',docs:'📚 Docs',test:'✅ Tests',perf:'⚡ Performance',other:'📦 Other'};
+const typeColors={feat:'var(--accent)',fix:'var(--hot)',refactor:'var(--purple)',chore:'var(--yellow)',docs:'var(--primary)',test:'var(--accent)',perf:'var(--orange)',other:'var(--text-dim)'};
+Object.entries(types).filter(([_,count])=>count>0).sort((a,b)=>b[1]-a[1]).forEach(([type,count])=>{
+const pct=(count/commits.length)*100;
+html+=`<div class="author-row"><span class="author-name">${typeLabels[type]||type}</span><div class="author-bar"><div class="author-fill" style="width:${pct}%;background:${typeColors[type]}"></div></div><span class="author-count">${count}</span></div>`;
+});
+html+='</div>';
+
+// Commit timeline
+html+='<div class="commits-list"><h4 style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📅 Commit Timeline</h4>';
+commits.slice(0,30).forEach(c=>{
+const typeColor=getTypeColor(c.message);
+html+=`<div class="commit-item">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">
+<div>
+<span class="commit-hash" style="color:${typeColor}">${c.hash}</span>
+<span class="commit-author"> ${c.author}</span>
+</div>
+<span class="commit-date">${c.date}</span>
+</div>
+<div class="commit-msg">${escapeHtml(c.message)}</div>
+</div>`;
+});
+if(commits.length>30)html+=`<div style="text-align:center;padding:12px;color:var(--text-dim);font-size:13px">... and ${commits.length-30} more commits</div>`;
+html+='</div>';
+
+// SVG Mind Map
+html+='<div class="viz-container"><h4 style="font-size:13px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">🧠 Commit Mind Map</h4>';
+html+=generateMindMap(commits,authors,types);
+html+='</div>';
+
+document.getElementById('results').innerHTML=html;
+}
+
+function statCard(num,label){
+return `<div class="stat-card"><div class="stat-num">${num}</div><div class="stat-label">${label}</div></div>`;
+}
+
+function getTypeColor(msg){
+const t=msg.split(/[\s:]/)[0].toLowerCase();
+const colors={feat:'#3fb950',fix:'#f85149',refactor:'#bc8cff',chore:'#d29922',docs:'#58a6ff',test:'#3fb950',perf:'#db6d28'};
+return colors[t]||'#8b949e';
+}
+
+function generateMindMap(commits,authors,types){
+const width=900;
+const height=400;
+const authorList=Object.keys(authors);
+const centerY=height/2;
+let svg=`<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="max-width:100%">`;
+
+// Center node
+svg+=`<circle cx="${width/2}" cy="${centerY}" r="50" fill="#161b22" stroke="#bc8cff" stroke-width="2"/>`;
+svg+=`<text x="${width/2}" y="${centerY-5}" text-anchor="middle" fill="#bc8cff" font-size="14" font-weight="bold">Repo</text>`;
+svg+=`<text x="${width/2}" y="${centerY+15}" text-anchor="middle" fill="#8b949e" font-size="11">${commits.length} commits</text>`;
+
+// Author nodes
+authorList.slice(0,6).forEach((author,i)=>{
+const angle=(Math.PI*2*i)/Math.min(authorList.length,6)-(Math.PI/2);
+const radius=140;
+const x=width/2+Math.cos(angle)*radius;
+const y=centerY+Math.sin(angle)*radius;
+const count=authors[author];
+const r=20+count*2;
+
+// Connection line
+svg+=`<line x1="${width/2}" y1="${centerY}" x2="${x}" y2="${y}" stroke="#30363d" stroke-width="1.5"/>`;
+
+// Node
+svg+=`<circle cx="${x}" cy="${y}" r="${r}" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>`;
+svg+=`<text x="${x}" y="${y-2}" text-anchor="middle" fill="#c9d1d9" font-size="10" font-weight="bold">${author.split(' ')[0]}</text>`;
+svg+=`<text x="${x}" y="${y+10}" text-anchor="middle" fill="#8b949e" font-size="9">${count}</text>`;
+
+// Commit type mini-nodes
+const typeKeys=Object.keys(types).filter(t=>types[t]>0).slice(0,3);
+typeKeys.forEach((type,j)=>{
+const tAngle=angle+(j-1)*0.3;
+const tx=x+Math.cos(tAngle)*60;
+const ty=y+Math.sin(tAngle)*60;
+const colors={feat:'#3fb950',fix:'#f85149',refactor:'#bc8cff',chore:'#d29922',docs:'#58a6ff',test:'#3fb950',perf:'#db6d28',other:'#8b949e'};
+svg+=`<circle cx="${tx}" cy="${ty}" r="8" fill="${colors[type]||'#8b949e'}" opacity="0.6"/>`;
+svg+=`<line x1="${x}" y1="${y}" x2="${tx}" y2="${ty}" stroke="#30363d" stroke-width="1" opacity="0.5"/>`;
+});
+});
+
+svg+='</svg>';
+return svg;
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
