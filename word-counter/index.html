@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Counter - Free Online Word & Character Count Tool | Free Tools</title>
+<meta name="description" content="Free online word counter, character counter, and text analysis tool. Count words, characters, sentences, paragraphs, reading time, and keyword density instantly.">
+<meta name="keywords" content="word counter, character counter, text analyzer, word count, sentence counter, reading time calculator, keyword density">
+<style>
+:root{--bg:#0f0f1e;--surface:#1a1a2e;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e0;--text-dim:#8888aa;--border:#2a2a4a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:800px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:0.9rem}
+textarea{width:100%;height:250px;background:var(--surface);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:1rem;padding:16px;resize:vertical;outline:none;font-family:inherit;line-height:1.6}
+textarea:focus{border-color:var(--primary)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:transform 0.2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-number{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:0.8rem;color:var(--text-dim);margin-top:4px}
+.density-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:20px}
+.density-section h3{font-size:1rem;margin-bottom:12px;color:var(--text-dim)}
+.density-list{display:flex;flex-wrap:wrap;gap:8px}
+.density-tag{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:0.85rem;display:flex;gap:6px;align-items:center}
+.density-tag .word{color:var(--accent);font-weight:600}
+.density-tag .count{color:var(--text-dim);font-size:0.75rem}
+.toolbar{display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+button{cursor:pointer;border:none;border-radius:10px;padding:10px 20px;font-size:0.9rem;font-weight:600;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.btn-secondary{background:var(--surface);border:2px solid var(--border);color:var(--text)}
+.btn-secondary:hover{border-color:var(--accent)}
+.reading-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:20px;display:flex;align-items:center;justify-content:space-around}
+.reading-item{text-align:center}
+.reading-value{font-size:1.5rem;font-weight:700;color:var(--accent)}
+.reading-label{font-size:0.8rem;color:var(--text-dim)}
+.cta{text-align:center;margin-top:20px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.8rem}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📝 Word Counter</h1>
+<p class="subtitle">Real-time word count, character count, reading time, and keyword density analysis. 100% free.</p>
+
+<textarea id="text" placeholder="Paste or type your text here..." oninput="count()"></textarea>
+
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-number" id="words">0</div><div class="stat-label">Words</div></div>
+<div class="stat-card"><div class="stat-number" id="chars">0</div><div class="stat-label">Characters</div></div>
+<div class="stat-card"><div class="stat-number" id="charsNoSpace">0</div><div class="stat-label">No Spaces</div></div>
+<div class="stat-card"><div class="stat-number" id="sentences">0</div><div class="stat-label">Sentences</div></div>
+<div class="stat-card"><div class="stat-number" id="paragraphs">0</div><div class="stat-label">Paragraphs</div></div>
+<div class="stat-card"><div class="stat-number" id="syllables">0</div><div class="stat-label">Syllables</div></div>
+</div>
+
+<div class="reading-bar">
+<div class="reading-item"><div class="reading-value" id="readTime">0s</div><div class="reading-label">Reading Time</div></div>
+<div class="reading-item"><div class="reading-value" id="speakTime">0s</div><div class="reading-label">Speaking Time</div></div>
+<div class="reading-item"><div class="reading-value" id="readLevel">—</div><div class="reading-label">Grade Level</div></div>
+<div class="reading-item"><div class="reading-value" id="handWriting">0</div><div class="stat-label">Handwriting (min)</div></div>
+</div>
+
+<div class="density-section">
+<h3>🔑 Top Keywords (density)</h3>
+<div class="density-list" id="density"></div>
+</div>
+
+<div class="toolbar">
+<button class="btn-primary" onclick="copyStats()">📋 Copy Stats</button>
+<button class="btn-secondary" onclick="clearText()">🗑️ Clear</button>
+<button class="btn-secondary" onclick="loadSample()">📝 Sample Text</button>
+</div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> to write faster and better</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free Word Counter — No signup, no limits</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a></p>
+</footer>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+
+function countWords(t){return t.trim()?t.trim().split(/\s+/).length:0}
+function countSentences(t){return t.trim()?(t.match(/[.!?]+/g)||[]).length:0}
+function countSyllables(word){word=word.toLowerCase();if(word.length<=3)return 1;word=word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/,'').replace(/^y/,'');return(word.match(/[aeiouy]{1,2}/g)||[]).length||1}
+function countAllSyllables(t){return t.trim()?t.trim().split(/\s+/).reduce((s,w)=>s+countSyllables(w.replace(/[^a-z]/gi,'')),0):0}
+
+function count(){
+const t=$('text').value;
+const words=countWords(t);
+const chars=t.length;
+const charsNoSpace=t.replace(/\s/g,'').length;
+const sentences=countSentences(t);
+const paragraphs=t.trim()?t.trim().split(/\n+/).filter(p=>p.trim()).length:0;
+const syllables=countAllSyllables(t);
+
+$('words').textContent=words.toLocaleString();
+$('chars').textContent=chars.toLocaleString();
+$('charsNoSpace').textContent=charsNoSpace.toLocaleString();
+$('sentences').textContent=sentences.toLocaleString();
+$('paragraphs').textContent=paragraphs.toLocaleString();
+$('syllables').textContent=syllables.toLocaleString();
+
+const readSec=Math.ceil(words/200*60);
+$('readTime').textContent=readSec<60?readSec+'s':Math.floor(readSec/60)+'m '+(readSec%60)+'s';
+const speakSec=Math.ceil(words/130*60);
+$('speakTime').textContent=speakSec<60?speakSec+'s':Math.floor(speakSec/60)+'m '+(speakSec%60)+'s';
+$('handWriting').textContent=Math.ceil(words/13.5);
+
+if(words>0&&sentences>0){
+const flesch=206.835-1.015*(words/sentences)-84.6*(syllables/words);
+let grade=Math.round(0.39*(words/sentences)+11.8*(syllables/words)-15.59);
+grade=Math.max(1,Math.min(20,grade));
+$('readLevel').textContent=grade<=8?'Easy ('+grade+')':grade<=12?'Medium ('+grade+')':'Hard ('+grade+')';
+}else{
+$('readLevel').textContent='—';
+}
+
+const stopWords=new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','can','this','that','these','those','i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','as','if','so','no','not']);
+const wordList=t.toLowerCase().match(/\b[a-z]{2,}\b/g)||[];
+const freq={};
+wordList.forEach(w=>{if(!stopWords.has(w)){freq[w]=(freq[w]||0)+1}});
+const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,15);
+$('density').innerHTML=sorted.length?sorted.map(([w,c])=>`<div class="density-tag"><span class="word">${w}</span><span class="count">${c} (${(c/words*100).toFixed(1)}%)</span></div>`).join(''):'<span style="color:var(--text-dim)">Start typing to see keyword density...</span>';
+}
+
+function copyStats(){
+const t=$('text').value;
+const stats=`Words: ${countWords(t)}\nCharacters: ${t.length}\nCharacters (no spaces): ${t.replace(/\s/g,'').length}\nSentences: ${countSentences(t)}\nParagraphs: ${t.trim()?t.trim().split(/\n+/).filter(p=>p.trim()).length:0}\nReading Time: ${Math.ceil(countWords(t)/200)} min\nSpeaking Time: ${Math.ceil(countWords(t)/130)} min`;
+navigator.clipboard.writeText(stats);
+showToast('Stats copied!');
+}
+
+function clearText(){$('text').value='';count()}
+function loadSample(){$('text').value='Artificial intelligence is transforming how we work. From writing to coding, AI tools like ChatGPT have become indispensable. Studies show that professionals who use AI complete tasks 40% faster on average. The key is knowing how to communicate effectively with these tools. That is where prompt engineering comes in. A well-crafted prompt can mean the difference between a mediocre response and a brilliant one.\n\nThis is why we created the AI Prompt Vault. It contains over five hundred prompts across twenty-four categories. Whether you are a marketer, developer, student, or entrepreneur, there is something for you.';count()}
+
+function showToast(msg){const t=$('toast')||document.createElement('div');t.id='toast';t.className='toast';t.textContent=msg;t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100';document.body.appendChild(t);setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2000)}
+
+count();
+</script>
+</body>
+</html>
