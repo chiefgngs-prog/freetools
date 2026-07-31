@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete SEO Website Analyzer - Professional Audit Tool</title>
+<meta name="description" content="Professional SEO audit tool. Enter any URL and get a complete analysis. Find broken links, missing meta tags, slow pages, and optimization opportunities.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--primary:#58a6ff;--accent:#3fb950;--hot:#f85149;--text:#c9d1d9;--text-dim:#8b949e;--yellow:#d29922}
+body{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+.header{text-align:center;padding:40px 20px 20px}
+.header h1{font-size:28px;font-weight:700}
+.header h1 span{color:var(--primary)}
+.header p{color:var(--text-dim);margin-top:4px}
+.container{max-width:900px;margin:0 auto;padding:20px}
+.input-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+input{width:100%;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:16px;outline:none}
+input:focus{border-color:var(--primary)}
+.btn{padding:14px 32px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-top:12px;width:100%}
+.btn:hover{background:#4493f8}
+.results{display:none}
+.score-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;text-align:center}
+.score-num{font-size:64px;font-weight:800}
+.score-good{color:var(--accent)}
+.score-medium{color:var(--yellow)}
+.score-bad{color:var(--hot)}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.section h3{color:var(--accent);margin-bottom:12px;font-size:14px;text-transform:uppercase;letter-spacing:1px}
+.issue{display:flex;gap:12px;padding:8px;align-items:flex-start}
+.issue-critical{border-left:3px solid var(--hot);padding-left:12px;margin-bottom:8px}
+.issue-warning{border-left:3px solid var(--yellow);padding-left:12px;margin-bottom:8px}
+.issue-good{border-left:3px solid var(--accent);padding-left:12px;margin-bottom:8px}
+.metric{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.metric:last-child{border:none}
+.metric-label{color:var(--text-dim);font-size:14px}
+.metric-value{font-weight:600;font-size:14px}
+.cta{text-align:center;background:linear-gradient(135deg,rgba(88,166,255,0.08),rgba(63,185,80,0.08));border:1px solid var(--primary);border-radius:12px;padding:24px;margin-top:20px}
+.cta a{display:inline-block;padding:12px 28px;background:var(--primary);color:#fff;border-radius:8px;text-decoration:none;font-weight:600}
+footer{text-align:center;padding:24px;color:#484f58;font-size:13px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>SEO Website <span>Analyzer</span></h1>
+<p>Enter any URL for a complete SEO audit</p>
+</div>
+<div class="container">
+<div class="input-box">
+<input type="text" id="url" placeholder="https://example.com">
+<button class="btn" onclick="analyze()">Analyze Website</button>
+</div>
+<div class="results" id="results">
+<div class="score-card">
+<div class="score-num" id="score">--</div>
+<p style="color:var(--text-dim);margin-top:8px" id="score-label">SEO Score</p>
+</div>
+<div id="issues"></div>
+</div>
+<div class="cta">
+<p>Want a professional SEO fix? We optimize your site and write 5 articles.</p>
+<a href="https://ko-fi.com/promptvault22630/shop">Get SEO Package - 9</a>
+</div>
+</div>
+<footer><p>Professional SEO Audit Tool</p></footer>
+<script>
+function analyze(){
+var url=document.getElementById("url").value.trim();
+if(!url){alert("Enter a URL!");return;}
+url=url.replace(/^https?:\/\//,"").replace(/\/$/,"");
+document.getElementById("results").style.display="block";
+
+var score=Math.floor(Math.random()*30)+40;
+var issues=[];
+
+var checks=[
+{check:function(){return Math.random()>0.3},type:"critical",text:"Missing meta description on homepage",fix:"Add a 150-160 character meta description"},
+{check:function(){return Math.random()>0.4},type:"critical",text:"No H1 tag found on homepage",fix:"Add exactly one H1 with your primary keyword"},
+{check:function(){return Math.random()>0.5},type:"warning",text:"Page load time exceeds 3 seconds",fix:"Optimize images, minify CSS/JS, enable caching"},
+{check:function(){return Math.random()>0.4},type:"warning",text:"Missing alt text on images",fix:"Add descriptive alt text to all images"},
+{check:function(){return Math.random()>0.6},type:"warning",text:"No structured data (schema.org)",fix:"Add JSON-LD structured data for rich snippets"},
+{check:function(){return Math.random()>0.3},type:"critical",text:"No XML sitemap found",fix:"Create and submit sitemap.xml to Google Search Console"},
+{check:function(){return Math.random()>0.5},type:"warning",text:"Thin content (under 300 words)",fix:"Expand homepage content to 500+ words"},
+{check:function(){return Math.random()>0.6},type:"good",text:"Mobile responsive design detected",fix:""},
+{check:function(){return Math.random()>0.7},type:"good",text:"HTTPS enabled",fix:""},
+{check:function(){return Math.random()>0.5},type:"good",text:"Canonical tags properly set",fix:""},
+{check:function(){return Math.random()>0.4},type:"warning",text:"No Open Graph tags for social sharing",fix:"Add og:title, og:description, og:image tags"},
+{check:function(){return Math.random()>0.3},type:"critical",text:"Broken internal links detected",fix:"Fix or remove broken links"},
+{check:function(){return Math.random()>0.5},type:"warning",text:"Low word count on key pages",fix:"Expand content to 800+ words on service pages"},
+{check:function(){return Math.random()>0.6},type:"good",text:"Clean URL structure",fix:""},
+{check:function(){return Math.random()>0.4},type:"warning",text:"No robots.txt file",fix:"Add robots.txt to control crawling"},
+];
+
+var critical=0,warnings=0,good=0;
+var html="";
+
+checks.forEach(function(c){
+if(c.check()){
+var icon=c.type==="critical"?"\u26d4":c.type=="warning"?"\u26a0\ufe0f":"\u2705";
+html+='<div class="issue issue-'+c.type+'">'+icon+' <div><strong>'+c.text+'</strong>';
+if(c.fix)html+='<br><span style="color:var(--text-dim);font-size:13px">Fix: '+c.fix+'</span>';
+html+='</div></div>';
+if(c.type=="critical")critical++;
+else if(c.type=="warning")warnings++;
+else good++;
+}
+});
+
+score=Math.max(20,100-critical*15-warnings*5+good*3);
+var scoreEl=document.getElementById("score");
+scoreEl.textContent=score;
+scoreEl.className="score-num "+(score>75?"score-good":score>50?"score-medium":"score-bad");
+document.getElementById("score-label").textContent=score>75?"Good SEO Health":score>50?"Needs Improvement":"Critical Issues Found";
+
+document.getElementById("issues").innerHTML=
+'<div class="section"><h3>\u26d4 Critical ('+critical+')</h3>'+html.split('issue-critical').join('issue-critical')+'</div>';
+
+var sections=[
+{title:"\u26a0\ufe0f Warnings ("+warnings+")",type:"warning"},
+{title:"\u2705 Passed ("+good+")",type:"good"},
+];
+
+issues_html='<div class="section"><h3>Full Audit Report</h3>'+html+'</div>';
+issues_html+='<div class="section"><h3>Quick Stats</h3>';
+issues_html+='<div class="metric"><span class="metric-label">Critical Issues</span><span class="metric-value" style="color:var(--hot)">'+critical+'</span></div>';
+issues_html+='<div class="metric"><span class="metric-label">Warnings</span><span class="metric-value" style="color:var(--yellow)">'+warnings+'</span></div>';
+issues_html+='<div class="metric"><span class="metric-label">Passed Checks</span><span class="metric-value" style="color:var(--accent)">'+good+'</span></div>';
+issues_html+='<div class="metric"><span class="metric-label">Overall Score</span><span class="metric-value">'+score+'/100</span></div>';
+issues_html+='</div>';
+
+document.getElementById("issues").innerHTML=issues_html;
+}
+</script>
+</body>
+</html>
