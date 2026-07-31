@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Case Converter - Free Online Tool | Free Tools</title>
+<meta name="description" content="Convert text to uppercase, lowercase, title case, sentence case, camelCase, snake_case, and more. Free online text case converter. No signup required.">
+<style>
+:root{--bg:#0f0f1e;--surface:#1a1a2e;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e0;--text-dim:#8888aa;--border:#2a2a4a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:700px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:0.9rem}
+textarea{width:100%;height:150px;background:var(--surface);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:1rem;padding:16px;resize:vertical;outline:none;font-family:inherit}
+textarea:focus{border-color:var(--primary)}
+.output-box{width:100%;min-height:100px;background:var(--surface);border:2px solid var(--border);border-radius:12px;color:var(--accent);font-size:1rem;padding:16px;margin-top:16px;white-space:pre-wrap;word-break:break-word}
+.buttons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:16px}
+button{cursor:pointer;border:2px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:12px;font-size:0.85rem;font-weight:600;transition:0.2s}
+button:hover{border-color:var(--accent);background:rgba(0,212,170,0.05);color:var(--accent)}
+button.active{border-color:var(--primary);background:rgba(108,92,231,0.1);color:var(--primary)}
+.toolbar{display:flex;gap:8px;margin-top:16px;justify-content:center}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{text-align:center;margin-top:20px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.8rem}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔤 Text Case Converter</h1>
+<p class="subtitle">Convert text between any case format instantly. 12 conversion modes. 100% free.</p>
+
+<textarea id="input" placeholder="Type or paste your text here..." oninput="convert('')">The quick brown fox jumps over the lazy dog.</textarea>
+
+<div class="buttons-grid">
+<button onclick="convert('upper')">UPPERCASE</button>
+<button onclick="convert('lower')">lowercase</button>
+<button onclick="convert('title')">Title Case</button>
+<button onclick="convert('sentence')">Sentence case</button>
+<button onclick="convert('camel')">camelCase</button>
+<button onclick="convert('pascal')">PascalCase</button>
+<button onclick="convert('snake')">snake_case</button>
+<button onclick="convert('kebab')">kebab-case</button>
+<button onclick="convert('constant')">CONSTANT_CASE</button>
+<button onclick="convert('alternating')">aLtErNaTiNg</button>
+<button onclick="convert('inverse')">iNVERSE</button>
+<button onclick="convert('capitalize')">Capitalize Each Word</button>
+</div>
+
+<div class="output-box" id="output">Select a conversion above to see results here.</div>
+
+<div class="toolbar">
+<button onclick="copyOutput()">📋 Copy Result</button>
+<button onclick="clearAll()">🗑️ Clear</button>
+</div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> for content creation and copywriting</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free Text Case Converter — No signup required</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a></p>
+</footer>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+let lastType='';
+
+function convert(type){
+if(!type)return;
+lastType=type;
+const text=$('input').value;
+let result='';
+switch(type){
+case 'upper':result=text.toUpperCase();break;
+case 'lower':result=text.toLowerCase();break;
+case 'title':result=text.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());break;
+case 'sentence':result=text.toLowerCase().replace(/(^\w|\.\s+\w|!\s+\w|\?\s+\w)/g,c=>c.toUpperCase());break;
+case 'camel':result=text.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g,(m,c)=>c.toUpperCase()).replace(/^./,c=>c.toLowerCase());break;
+case 'pascal':result=text.toLowerCase().replace(/(?:^|[^a-zA-Z0-9]+)(.)/g,(m,c)=>c.toUpperCase());break;
+case 'snake':result=text.toLowerCase().replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'');break;
+case 'kebab':result=text.toLowerCase().replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');break;
+case 'constant':result=text.toUpperCase().replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'');break;
+case 'alternating':result=text.split('').map((c,i)=>i%2?c.toUpperCase():c.toLowerCase()).join('');break;
+case 'inverse':result=text.split('').map(c=>c===c.toUpperCase()?c.toLowerCase():c.toUpperCase()).join('');break;
+case 'capitalize':result=text.replace(/\b\w/g,c=>c.toUpperCase());break;
+}
+$('output').textContent=result;
+}
+
+function copyOutput(){
+const text=$('output').textContent;
+if(text&&text!=='Select a conversion above to see results here.'){
+navigator.clipboard.writeText(text);
+$('toast').classList.add('show');
+setTimeout(()=>$('toast').classList.remove('show'),2000);
+}
+}
+
+function clearAll(){
+$('input').value='';
+$('output').textContent='Select a conversion above to see results here.';
+}
+</script>
+</body>
+</html>
