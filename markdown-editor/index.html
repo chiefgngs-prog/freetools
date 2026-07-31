@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Editor - Free Online Markdown to HTML Converter | Free Tools</title>
+<meta name="description" content="Free online Markdown editor with live preview. Write Markdown and see HTML output instantly. Export to HTML, copy formatted text. No signup required.">
+<meta name="keywords" content="markdown editor, markdown to html, markdown converter, online markdown, md editor, markdown preview, markdown formatter">
+<style>
+:root{--bg:#0f0f1e;--surface:#1a1a2e;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e0;--text-dim:#8888aa;--border:#2a2a4a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;padding:0}
+header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+h1{font-size:1.4rem;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap}
+button{cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:6px 12px;font-size:0.85rem;transition:0.2s}
+button:hover{border-color:var(--accent);background:var(--bg)}
+.btn-md{font-weight:bold;font-size:0.95rem;padding:4px 10px}
+.main{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+@media(max-width:700px){.main{grid-template-columns:1fr;grid-template-rows:1fr 1fr}}
+.editor-pane{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.preview-pane{display:flex;flex-direction:column}
+.pane-header{padding:8px 16px;background:var(--surface);font-size:0.8rem;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+textarea{flex:1;background:var(--bg);border:none;color:var(--text);font-family:'Consolas','Courier New',monospace;font-size:0.95rem;padding:20px;resize:none;outline:none;line-height:1.6}
+.preview{flex:1;padding:20px;overflow:auto;line-height:1.7}
+.preview h1,.preview h2,.preview h3{margin:16px 0 8px;color:var(--text)}
+.preview h1{font-size:1.8rem;border-bottom:2px solid var(--border);padding-bottom:8px}
+.preview h2{font-size:1.4rem}
+.preview h3{font-size:1.2rem}
+.preview p{margin:8px 0}
+.preview a{color:var(--accent)}
+.preview code{background:var(--surface);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.9rem;color:var(--accent)}
+.preview pre{background:var(--surface);padding:16px;border-radius:8px;overflow-x:auto;margin:12px 0;border:1px solid var(--border)}
+.preview pre code{background:none;padding:0;color:var(--text)}
+.preview blockquote{border-left:4px solid var(--primary);padding-left:16px;margin:12px 0;color:var(--text-dim);font-style:italic}
+.preview ul,.preview ol{margin:8px 0;padding-left:24px}
+.preview li{margin:4px 0}
+.preview table{border-collapse:collapse;width:100%;margin:12px 0}
+.preview th,.preview td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+.preview th{background:var(--surface)}
+.preview img{max-width:100%;border-radius:8px}
+.preview hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+.preview input[type="checkbox"]{margin-right:6px;accent-color:var(--primary)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+footer{text-align:center;padding:12px;color:var(--text-dim);font-size:0.75rem;border-top:1px solid var(--border)}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<header>
+<h1>📝 Markdown Editor</h1>
+<div class="toolbar">
+<button class="btn-md" onclick="insert('**','**','bold')" title="Bold"><b>B</b></button>
+<button class="btn-md" onclick="insert('*','*','italic')" title="Italic"><i>I</i></button>
+<button class="btn-md" onclick="insert('~~','~~','strikethrough')" title="Strikethrough"><s>S</s></button>
+<button class="btn-md" onclick="insert('`','`','code')" title="Inline Code">{ }</button>
+<button class="btn-md" onclick="insertLine('## ')" title="Heading">H</button>
+<button class="btn-md" onclick="insertLine('- ')" title="Bullet List">• List</button>
+<button class="btn-md" onclick="insertLine('1. ')" title="Numbered List">1. List</button>
+<button class="btn-md" onclick="insertLine('> ')" title="Blockquote">❝</button>
+<button class="btn-md" onclick="insertLine('---')" title="Horizontal Rule">―</button>
+<button onclick="copyHtml()">📋 Copy HTML</button>
+<button onclick="copyMd()">📋 Copy Markdown</button>
+<button onclick="download()">💾 Download .html</button>
+<button onclick="clearAll()">🗑️ Clear</button>
+</div>
+</header>
+
+<div class="main">
+<div class="editor-pane">
+<div class="pane-header"><span>✏️ Markdown Input</span><span id="charCount">0 chars</span></div>
+<textarea id="editor" oninput="render()" placeholder="# Welcome to Markdown Editor
+
+Type **Markdown** on the left, see the *preview* on the right.
+
+## Features
+- Live preview
+- Copy HTML
+- Download as HTML file
+- Full Markdown support
+
+> Start typing..."></textarea>
+</div>
+<div class="preview-pane">
+<div class="pane-header"><span>👁️ Live Preview</span><span><a href="https://chiefgngs-prog.github.io/promptvault/" target="_blank" style="color:var(--accent);text-decoration:none">Get 503 AI Prompts →</a></span></div>
+<div class="preview" id="preview"></div>
+</div>
+</div>
+
+<footer>
+<p>Free Markdown Editor — 100% Client-Side | <a href="https://chiefgngs-prog.github.io/freetools/">More Free Tools</a></p>
+</footer>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+
+function render(){
+const md=$('editor').value;
+$('preview').innerHTML=parseMarkdown(md);
+$('charCount').textContent=md.length+' chars';
+}
+
+function parseMarkdown(md){
+// Escape HTML
+md=md.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+// Code blocks
+md=md.replace(/```(\w*)\n([\s\S]*?)```/g,(m,lang,code)=>'<pre><code>'+code.trim()+'</code></pre>');
+
+// Tables
+md=md.replace(/^\|(.+)\|\n\|([-:\s|]+)\|\n((?:\|.+\|\n?)*)/gm,(m,hdr,sep,rows)=>{
+const headers=hdr.split('|').map(h=>h.trim()).filter(Boolean);
+let table='<table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>';
+rows.trim().split('\n').forEach(row=>{
+const cells=row.split('|').map(c=>c.trim()).filter((c,i,arr)=>i>0&&i<arr.length-1?true:false);
+if(cells.length)table+='<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>'
+});
+table+='</tbody></table>';
+return table
+});
+
+// Task lists
+md=md.replace(/^- \[x\] (.+)$/gm,'<input type="checkbox" checked> $1');
+md=md.replace(/^- \[ \] (.+)$/gm,'<input type="checkbox"> $1');
+
+// Headers
+md=md.replace(/^######\s+(.+)$/gm,'<h6>$1</h6>');
+md=md.replace(/^#####\s+(.+)$/gm,'<h5>$1</h5>');
+md=md.replace(/^####\s+(.+)$/gm,'<h4>$1</h4>');
+md=md.replace(/^###\s+(.+)$/gm,'<h3>$1</h3>');
+md=md.replace(/^##\s+(.+)$/gm,'<h2>$1</h2>');
+md=md.replace(/^#\s+(.+)$/gm,'<h1>$1</h1>');
+
+// Horizontal rule
+md=md.replace(/^---+$/gm,'<hr>');
+
+// Blockquote
+md=md.replace(/^&gt;\s+(.+)$/gm,'<blockquote>$1</blockquote>');
+
+// Bold, italic, strikethrough, code
+md=md.replace(/\*\*([^\*]+)\*\*/g,'<strong>$1</strong>');
+md=md.replace(/\*([^\*]+)\*/g,'<em>$1</em>');
+md=md.replace(/~~([^~]+)~~/g,'<s>$1</s>');
+md=md.replace(/`([^`]+)`/g,'<code>$1</code>');
+
+// Links
+md=md.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>');
+
+// Images
+md=md.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" alt="$1">');
+
+// Unordered lists
+md=md.replace(/(?:^- (.+)$\n?)+/gm,m=>{
+const items=m.trim().split('\n').map(l=>'<li>'+l.replace(/^- /,'')+'</li>').join('');
+return '<ul>'+items+'</ul>'
+});
+
+// Ordered lists
+md=md.replace(/(?:^\d+\. (.+)$\n?)+/gm,m=>{
+const items=m.trim().split('\n').map(l=>'<li>'+l.replace(/^\d+\. /,'')+'</li>').join('');
+return '<ol>'+items+'</ol>'
+});
+
+// Paragraphs
+md=md.split(/\n\n+/).map(block=>{
+if(block.match(/^<(h\d|ul|ol|pre|blockquote|hr|table)/))return block;
+return block.trim()?'<p>'+block.replace(/\n/g,'<br>')+'</p>':''
+}).join('\n');
+
+return md
+}
+
+function insert(before,after,placeholder){
+const ta=$('editor');
+const start=ta.selectionStart,end=ta.selectionEnd;
+const selected=ta.value.substring(start,end)||placeholder;
+ta.value=ta.value.substring(0,start)+before+selected+after+ta.value.substring(end);
+ta.selectionStart=start+before.length;
+ta.selectionEnd=start+before.length+selected.length;
+ta.focus();
+render();
+}
+
+function insertLine(prefix){
+const ta=$('editor');
+const start=ta.selectionStart;
+const lineStart=ta.value.lastIndexOf('\n',start-1)+1;
+ta.value=ta.value.substring(0,lineStart)+prefix+ta.value.substring(lineStart);
+ta.selectionStart=ta.selectionEnd=start+prefix.length;
+ta.focus();
+render();
+}
+
+function copyHtml(){
+const html=$('preview').innerHTML;
+navigator.clipboard.writeText(html);
+showToast('HTML copied!');
+}
+
+function copyMd(){
+navigator.clipboard.writeText($('editor').value);
+showToast('Markdown copied!');
+}
+
+function download(){
+const html='<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n<style>body{font-family:system-ui;max-width:700px;margin:40px auto;padding:20px;line-height:1.7;color:#333}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}pre{background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:8px;overflow-x:auto}blockquote{border-left:4px solid #6c5ce7;padding-left:16px;color:#666;font-style:italic}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}th{background:#f4f4f4}</style>\n</head>\n<body>\n'+$('preview').innerHTML+'\n</body>\n</html>';
+const blob=new Blob([html],{type:'text/html'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='document.html';
+a.click();
+showToast('Downloaded!');
+}
+
+function clearAll(){$('editor').value='';render()}
+
+function showToast(msg){
+$('toast').textContent=msg;
+$('toast').classList.add('show');
+setTimeout(()=>$('toast').classList.remove('show'),2000);
+}
+
+render();
+</script>
+</body>
+</html>
