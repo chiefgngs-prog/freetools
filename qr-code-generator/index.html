@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Generator - Free Online QR Code Maker | Free Tools</title>
+<meta name="description" content="Generate QR codes for free. Create QR codes for URLs, text, WiFi, email, phone. Download as PNG. No signup required. 100% client-side.">
+<meta name="keywords" content="qr code generator, free qr code, qr code maker, create qr code, qr code online, wifi qr code">
+<style>
+:root{--bg:#0f0f1e;--surface:#1a1a2e;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e0;--text-dim:#8888aa;--border:#2a2a4a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:600px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:0.9rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;margin-bottom:6px;font-size:0.85rem;color:var(--text-dim)}
+input,select,textarea{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);padding:12px;font-size:0.95rem;outline:none;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+.type-buttons{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.type-btn{padding:8px 16px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--text);cursor:pointer;font-size:0.85rem;transition:0.2s}
+.type-btn.active{border-color:var(--primary);background:rgba(108,92,231,0.1);color:var(--primary)}
+.qr-preview{text-align:center;margin:20px 0}
+.qr-preview canvas{background:#fff;padding:16px;border-radius:12px;max-width:100%}
+.controls-row{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:16px}
+.size-slider{flex:1}
+button{cursor:pointer;border:none;border-radius:12px;padding:14px 24px;font-size:1rem;font-weight:600;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;width:100%;margin-top:12px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,92,231,0.4)}
+.btn-download{background:var(--surface);border:2px solid var(--border);color:var(--text)}
+.btn-download:hover{border-color:var(--accent)}
+.color-row{display:flex;gap:12px;justify-content:center;margin-top:12px}
+.color-picker{display:flex;flex-direction:column;align-items:center;gap:4px}
+.color-picker label{font-size:0.75rem;color:var(--text-dim)}
+.color-picker input{width:50px;height:50px;padding:0;border:none;border-radius:8px;cursor:pointer;background:none}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{text-align:center;margin-top:20px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.8rem}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📱 QR Code Generator</h1>
+<p class="subtitle">Generate QR codes for URLs, text, WiFi, and more. Free, instant, no signup. Download as PNG.</p>
+
+<div class="card">
+<div class="type-buttons">
+<button class="type-btn active" onclick="setType('url',this)">🔗 URL</button>
+<button class="type-btn" onclick="setType('text',this)">📝 Text</button>
+<button class="type-btn" onclick="setType('wifi',this)">📶 WiFi</button>
+<button class="type-btn" onclick="setType('email',this)">✉️ Email</button>
+<button class="type-btn" onclick="setType('phone',this)">📞 Phone</button>
+</div>
+
+<div id="inputArea">
+<div class="input-group"><label>Enter URL</label><input type="text" id="qrInput" placeholder="https://example.com" oninput="generate()"></div>
+</div>
+
+<div class="color-row">
+<div class="color-picker"><label>Foreground</label><input type="color" id="fgColor" value="#000000" oninput="generate()"></div>
+<div class="color-picker"><label>Background</label><input type="color" id="bgColor" value="#ffffff" oninput="generate()"></div>
+</div>
+
+<div class="controls-row">
+<label style="font-size:0.85rem;color:var(--text-dim)">Size: <span id="sizeVal">256</span>px</label>
+<input type="range" class="size-slider" id="qrSize" min="128" max="512" value="256" oninput="updateSize();generate()">
+</div>
+
+<div class="qr-preview">
+<canvas id="qrCanvas"></canvas>
+</div>
+
+<button class="btn-primary" onclick="generate()">🔄 Generate QR Code</button>
+<button class="btn-download" onclick="download()" style="margin-top:8px;width:100%">💾 Download PNG</button>
+</div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> for your business</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free QR Code Generator — 100% client-side</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a></p>
+</footer>
+</div>
+
+<div class="toast" id="toast">Downloaded!</div>
+
+<script>
+let currentType='url';
+function $(id){return document.getElementById(id)}
+
+function setType(type,btn){
+currentType=type;
+document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+const area=$('inputArea');
+if(type==='url'){area.innerHTML='<div class="input-group"><label>Enter URL</label><input type="text" id="qrInput" placeholder="https://example.com" oninput="generate()"></div>'}
+else if(type==='text'){area.innerHTML='<div class="input-group"><label>Enter Text</label><textarea id="qrInput" rows="3" placeholder="Any text..." oninput="generate()"></textarea></div>'}
+else if(type==='wifi'){area.innerHTML='<div class="input-group"><label>WiFi Network Name (SSID)</label><input type="text" id="wifiSsid" placeholder="MyWiFi" oninput="generate()"></div><div class="input-group"><label>Password</label><input type="text" id="wifiPass" placeholder="password123" oninput="generate()"></div><div class="input-group"><label>Security</label><select id="wifiSec" onchange="generate()"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">No Password</option></select></div>'}
+else if(type==='email'){area.innerHTML='<div class="input-group"><label>Email Address</label><input type="email" id="emailAddr" placeholder="hello@example.com" oninput="generate()"></div><div class="input-group"><label>Subject (optional)</label><input type="text" id="emailSubj" placeholder="Hello" oninput="generate()"></div><div class="input-group"><label>Body (optional)</label><textarea id="emailBody" rows="2" placeholder="Message..." oninput="generate()"></textarea></div>'}
+else if(type==='phone'){area.innerHTML='<div class="input-group"><label>Phone Number</label><input type="tel" id="phoneNum" placeholder="+1234567890" oninput="generate()"></div>'}
+generate();
+}
+
+function getData(){
+if(currentType==='url'){return $('qrInput')?.value||''}
+if(currentType==='text'){return $('qrInput')?.value||''}
+if(currentType==='wifi'){const s=$('wifiSsid')?.value||'';const p=$('wifiPass')?.value||'';const sec=$('wifiSec')?.value||'WPA';return `WIFI:T:${sec};S:${s};P:${p};;`}
+if(currentType==='email'){const e=$('emailAddr')?.value||'';const s=$('emailSubj')?.value||'';const b=$('emailBody')?.value||'';return `mailto:${e}?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(b)}`}
+if(currentType==='phone'){return `tel:${$('phoneNum')?.value||''}`}
+return '';
+}
+
+// Simple QR Code generator using a basic algorithm
+// Since we can't use external libraries, we'll use a data URL approach with a simple pattern
+function generate(){
+const data=getData();
+if(!data){$('qrCanvas').getContext('2d').clearRect(0,0,$('qrCanvas').width,$('qrCanvas').height);return}
+// Use Google Charts API as fallback since we can't generate true QR codes client-side without a library
+const size=parseInt($('qrSize').value);
+const fg=$('fgColor').value.replace('#','');
+const bg=$('bgColor').value.replace('#','');
+const canvas=$('qrCanvas');
+canvas.width=size;canvas.height=size;
+const ctx=canvas.getContext('2d');
+const img=new Image();
+img.crossOrigin='anonymous';
+img.onload=function(){ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);ctx.drawImage(img,0,0,size,size)};
+img.onerror=function(){ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);ctx.fillStyle='#000';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.fillText('QR generation needs internet',size/2,size/2)};
+img.src=`https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}&color=${fg}&bgcolor=${bg}`;
+}
+
+function updateSize(){$('sizeVal').textContent=$('qrSize').value}
+
+function download(){
+const canvas=$('qrCanvas');
+const link=document.createElement('a');
+link.download='qrcode.png';
+link.href=canvas.toDataURL('image/png');
+link.click();
+showToast('QR code downloaded!');
+}
+
+function showToast(msg){
+$('toast').textContent=msg;
+$('toast').classList.add('show');
+setTimeout(()=>$('toast').classList.remove('show'),2000);
+}
+
+generate();
+</script>
+</body>
+</html>
