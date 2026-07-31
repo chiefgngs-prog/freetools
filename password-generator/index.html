@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Generator - Free Secure Password Tool | Free Tools</title>
+<meta name="description" content="Generate strong, secure passwords instantly. Free online password generator with customizable length, characters, and strength meter. No signup required.">
+<meta name="keywords" content="password generator, strong password, secure password, random password generator, password creator">
+<style>
+:root{--bg:#0f0f1e;--surface:#1a1a2e;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e0;--text-dim:#8888aa;--border:#2a2a4a;--danger:#e74c3c;--warning:#f39c12;--success:#2ecc71}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:600px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:30px;font-size:0.9rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;margin-bottom:20px}
+.password-display{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.password-box{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:16px;font-size:1.4rem;font-family:'Courier New',monospace;letter-spacing:2px;word-break:break-all;min-height:60px;display:flex;align-items:center;justify-content:center}
+.password-box.weak{border-color:var(--danger);color:var(--danger)}
+.password-box.medium{border-color:var(--warning);color:var(--warning)}
+.password-box.strong{border-color:var(--success);color:var(--success)}
+button{cursor:pointer;border:none;border-radius:12px;padding:14px 24px;font-size:1rem;font-weight:600;transition:all 0.2s}
+.btn-copy{background:var(--surface);border:2px solid var(--border);color:var(--text);padding:14px 18px}
+.btn-copy:hover{border-color:var(--accent)}
+.btn-generate{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;width:100%;margin-top:16px}
+.btn-generate:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,92,231,0.4)}
+.controls{margin-bottom:20px}
+.control-group{margin-bottom:16px}
+.control-group label{display:block;margin-bottom:8px;font-size:0.9rem;color:var(--text-dim)}
+input[type="range"]{width:100%;accent-color:var(--primary);height:6px}
+.length-value{font-size:1.5rem;font-weight:700;color:var(--accent)}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:10px;cursor:pointer;transition:0.2s}
+.option:hover{background:var(--border)}
+.option input{accent-color:var(--primary);width:20px;height:20px}
+.option span{font-size:0.85rem}
+.strength-bar{height:6px;border-radius:3px;background:var(--border);margin-top:12px;overflow:hidden}
+.strength-fill{height:100%;border-radius:3px;transition:width 0.3s,background 0.3s}
+.strength-label{text-align:center;margin-top:8px;font-size:0.85rem;font-weight:600}
+.history{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-top:20px}
+.history h3{font-size:1rem;margin-bottom:12px;color:var(--text-dim)}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px;margin-bottom:8px;font-family:monospace;font-size:0.85rem}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--success);color:#fff;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{text-align:center;margin-top:30px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+.cta a:hover{text-decoration:underline}
+footer{text-align:center;color:var(--text-dim);margin-top:30px;font-size:0.8rem}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔐 Password Generator</h1>
+<p class="subtitle">Free, secure password generator. Everything runs in your browser — nothing is sent to any server.</p>
+
+<div class="card">
+<div class="password-display">
+<div class="password-box" id="passwordBox">Click generate</div>
+<button class="btn-copy" onclick="copyPassword()" id="copyBtn">📋 Copy</button>
+</div>
+<div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%"></div></div>
+<div class="strength-label" id="strengthLabel"></div>
+
+<div class="controls">
+<div class="control-group">
+<label>Password Length: <span class="length-value" id="lenVal">16</span></label>
+<input type="range" id="length" min="4" max="64" value="16" oninput="updateLen()">
+</div>
+<div class="options">
+<label class="option"><input type="checkbox" id="uppercase" checked><span>UPPERCASE (A-Z)</span></label>
+<label class="option"><input type="checkbox" id="lowercase" checked><span>lowercase (a-z)</span></label>
+<label class="option"><input type="checkbox" id="numbers" checked><span>Numbers (0-9)</span></label>
+<label class="option"><input type="checkbox" id="symbols"><span>Symbols (!@#$)</span></label>
+<label class="option"><input type="checkbox" id="excludeSimilar"><span>Exclude similar (il1O0)</span></label>
+<label class="option"><input type="checkbox" id="noDuplicates"><span>No duplicates</span></label>
+</div>
+</div>
+
+<button class="btn-generate" onclick="generate()">🎲 Generate Password</button>
+</div>
+
+<div class="history" id="historySection" style="display:none">
+<h3>Recent Passwords</h3>
+<div id="historyList"></div>
+</div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> to boost your productivity</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free Online Password Generator — 100% client-side, no data stored</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/" style="color:var(--text-dim)">← More Free Tools</a></p>
+</footer>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+const history=[];
+const upper='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const lower='abcdefghijklmnopqrstuvwxyz';
+const nums='0123456789';
+const syms='!@#$%^&*()_+-=[]{}|;:,.<>?';
+const similar='il1Lo0O';
+
+function $(id){return document.getElementById(id)}
+
+function updateLen(){$('lenVal').textContent=$('length').value}
+
+function generate(){
+let pool='';
+if($('uppercase').checked)pool+=upper;
+if($('lowercase').checked)pool+=lower;
+if($('numbers').checked)pool+=nums;
+if($('symbols').checked)pool+=syms;
+if(!pool){$('passwordBox').textContent='Select at least one option';return}
+if($('excludeSimilar').checked){pool=pool.split('').filter(c=>!similar.includes(c)).join('')}
+const len=parseInt($('length').value);
+let pw='';
+if($('noDuplicates').checked){
+pool=pool.split('').sort(()=>Math.random()-0.5).join('').slice(0,len);
+pw=pool;
+while(pw.length<len){pw=pw.split('').sort(()=>Math.random()-0.5).join('')}
+}else{
+const arr=pool.split('');
+for(let i=0;i<len;i++){pw+=arr[Math.floor(Math.random()*arr.length)]}
+}
+$('passwordBox').textContent=pw;
+$('passwordBox').className='password-box';
+updateStrength(pw);
+history.unshift(pw);
+if(history.length>5)history.pop();
+updateHistory();
+}
+
+function updateStrength(pw){
+let score=0;
+if(pw.length>=8)score++;
+if(pw.length>=16)score++;
+if(pw.length>=24)score++;
+if(/[a-z]/.test(pw)&&/[A-Z]/.test(pw))score++;
+if(/\d/.test(pw))score++;
+if(/[^a-zA-Z0-9]/.test(pw))score++;
+const pct=Math.min(100,score*17);
+const fill=$('strengthFill');
+const box=$('passwordBox');
+const label=$('strengthLabel');
+fill.style.width=pct+'%';
+if(score<=2){fill.style.background='var(--danger)';box.classList.add('weak');label.textContent='Weak';label.style.color='var(--danger)'}
+else if(score<=4){fill.style.background='var(--warning)';box.classList.add('medium');label.textContent='Medium';label.style.color='var(--warning)'}
+else{fill.style.background='var(--success)';box.classList.add('strong');label.textContent='Strong!';label.style.color='var(--success)'}
+}
+
+function updateHistory(){
+if(history.length===0){$('historySection').style.display='none';return}
+$('historySection').style.display='block';
+$('historyList').innerHTML=history.map(p=>`<div class="history-item"><span>${p}</span><button onclick="copyText('${p}')" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--text);font-size:0.8rem;cursor:pointer">Copy</button></div>`).join('');
+}
+
+function copyPassword(){
+const pw=$('passwordBox').textContent;
+if(pw&&pw!=='Click generate')copyText(pw);
+}
+
+function copyText(t){
+navigator.clipboard.writeText(t).then(()=>{
+$('toast').classList.add('show');
+setTimeout(()=>$('toast').classList.remove('show'),2000);
+});
+}
+
+generate();
+</script>
+</body>
+</html>
