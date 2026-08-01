@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diff Checker - Free Online Text Comparison Tool | Free Tools</title>
+<meta name="description" content="Free online diff checker. Compare two blocks of text line by line and see added, removed, and unchanged lines using a longest common subsequence algorithm.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#8888a0;--border:#252538;--add-bg:#16331f;--del-bg:#3a1620;--add-line:#00d4aa;--del-line:#ff6b81}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:900px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:.9rem}
+label{display:block;font-size:.85rem;color:var(--text-dim);margin:14px 0 6px}
+textarea{width:100%;height:180px;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;padding:12px 14px;outline:none;font-family:'Consolas',monospace;resize:vertical;line-height:1.6}
+textarea:focus{border-color:var(--primary)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+button{cursor:pointer;border:none;border-radius:10px;padding:10px 22px;font-size:.9rem;font-weight:600;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.toolbar{text-align:center;margin-top:16px}
+.stats{display:flex;gap:24px;justify-content:center;margin:18px 0}
+.stat{font-size:.85rem;color:var(--text-dim)}
+.stat b{font-size:1.2rem;display:block}
+.stat.add b{color:var(--add-line)}
+.stat.del b{color:var(--del-line)}
+.diff{margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.diffline{display:flex;font-family:'Consolas',monospace;font-size:.9rem;line-height:1.6}
+.diffline .gutter{flex:0 0 40px;text-align:center;user-select:none;padding:0 6px}
+.diffline .txt{padding:0 10px;flex:1;white-space:pre-wrap;word-break:break-word}
+.diffline.add{background:var(--add-bg)}
+.diffline.add .gutter{color:var(--add-line)}
+.diffline.del{background:var(--del-bg)}
+.diffline.del .gutter{color:var(--del-line)}
+.diffline.eq{color:var(--text-dim)}
+.empty{color:var(--text-dim);padding:20px;text-align:center}
+footer{text-align:center;color:var(--text-dim);margin-top:28px;font-size:.85rem}
+footer a{color:var(--accent);text-decoration:none;display:block;margin:4px 0}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform .3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>⚖️ Diff Checker</h1>
+<p class="subtitle">Compare two text blocks line by line — additions and removals highlighted with an LCS algorithm.</p>
+
+<div class="cols">
+<div>
+<label for="a">Original Text</label>
+<textarea id="a" placeholder="Paste the original text here…" oninput="diff()">The quick brown fox
+jumps over the lazy dog
+Line three is the same
+Goodbye</textarea>
+</div>
+<div>
+<label for="b">Changed Text</label>
+<textarea id="b" placeholder="Paste the changed text here…" oninput="diff()">The quick brown fox
+leaps over the lazy dog
+Line three is the same
+A brand new line
+Goodbye</textarea>
+</div>
+</div>
+
+<div class="toolbar">
+<button class="btn-primary" onclick="diff()">🔄 Compare</button>
+</div>
+
+<div class="stats">
+<div class="stat add">Added<b id="addCount">0</b></div>
+<div class="stat del">Removed<b id="delCount">0</b></div>
+<div class="stat">Unchanged<b id="eqCount">0</b></div>
+</div>
+
+<div class="diff" id="diff"></div>
+
+<footer>
+<a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a>
+<a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompt Vault →</a>
+</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function diff(){
+  const a=$('a').value.split('\n');
+  const b=$('b').value.split('\n');
+  const m=a.length,n=b.length;
+  // ponytail: O(m*n) LCS table, fine for pasted text; switch to Myers diff for multi-thousand-line inputs.
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=m-1;i>=0;i--)for(let j=n-1;j>=0;j--)
+    dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const rows=[];let i=0,j=0,add=0,del=0,eq=0;
+  while(i<m&&j<n){
+    if(a[i]===b[j]){rows.push({t:'eq',s:a[i]});i++;j++;eq++}
+    else if(dp[i+1][j]>=dp[i][j+1]){rows.push({t:'del',s:a[i]});i++;del++}
+    else{rows.push({t:'add',s:b[j]});j++;add++}
+  }
+  while(i<m){rows.push({t:'del',s:a[i]});i++;del++}
+  while(j<n){rows.push({t:'add',s:b[j]});j++;add++}
+  $('addCount').textContent=add;
+  $('delCount').textContent=del;
+  $('eqCount').textContent=eq;
+  const sym={add:'+',del:'-',eq:' '};
+  $('diff').innerHTML=rows.map(r=>'<div class="diffline '+r.t+'"><span class="gutter">'+sym[r.t]+'</span><span class="txt">'+(esc(r.s)||' ')+'</span></div>').join('');
+}
+diff();
+</script>
+</body>
+</html>

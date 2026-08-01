@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slug Generator - Free URL Slug Maker | Free Tools</title>
+<meta name="description" content="Free online slug generator. Turn any title into a clean, SEO-friendly URL slug with custom separators and casing. Copy with one click.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#8888a0;--border:#252538}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:720px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:.9rem}
+label{display:block;font-size:.85rem;color:var(--text-dim);margin:14px 0 6px}
+input,select{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;padding:12px 14px;outline:none;font-family:inherit}
+input:focus,select:focus{border-color:var(--primary)}
+select{cursor:pointer}
+.options{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.opt{display:flex;align-items:center;gap:8px;font-size:.9rem;margin-top:14px}
+.opt select{width:auto}
+.opt input{width:auto}
+button{cursor:pointer;border:none;border-radius:10px;padding:12px 24px;font-size:.95rem;font-weight:600;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.output{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.output h3{font-size:.95rem;color:var(--text-dim);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.slug{font-family:'Consolas',monospace;font-size:1.1rem;color:var(--accent);word-break:break-all;min-height:1.4em}
+.slug.empty{color:var(--text-dim);font-size:.95rem}
+footer{text-align:center;color:var(--text-dim);margin-top:28px;font-size:.85rem}
+footer a{color:var(--accent);text-decoration:none;display:block;margin:4px 0}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform .3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔗 Slug Generator</h1>
+<p class="subtitle">Turn any title into a clean, SEO-friendly URL slug — live, with custom separator and casing.</p>
+
+<label for="text">Title or Text</label>
+<input id="text" type="text" placeholder="10 Café Recipes for a Lazy Sunday!" oninput="slugify()">
+
+<label style="margin-top:14px">Options</label>
+<div class="options">
+<label class="opt">Separator
+<select id="sep" onchange="slugify()">
+<option value="-">Hyphen ( - )</option>
+<option value="_">Underscore ( _ )</option>
+<option value=".">Dot ( . )</option>
+</select>
+</label>
+<label class="opt"><input type="checkbox" id="lower" checked onchange="slugify()"> Lowercase</label>
+</div>
+
+<div class="output">
+<h3>URL Slug <button class="btn-primary" onclick="copySlug()">📋 Copy Slug</button></h3>
+<div class="slug empty" id="out">Start typing a title…</div>
+</div>
+
+<footer>
+<a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a>
+<a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompt Vault →</a>
+</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function escRe(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function slugify(){
+  const sep=$('sep').value||'-';   // ponytail: select always has a value; guard against empty -> invalid /{2,}/
+  let s=$('text').value;
+  if($('lower').checked)s=s.toLowerCase();
+  s=s.normalize('NFKD').replace(/[̀-ͯ]/g,'');          // strip accents/diacritics
+  s=s.replace(/[^a-zA-Z0-9\s\-_.]/g,'');                         // drop symbols, keep alnum/space/-/_/.
+  s=s.replace(/[.\-_]+/g,' ');                                   // unify existing separators into spaces
+  s=s.trim().replace(/\s+/g,sep);                                // collapse whitespace to chosen separator
+  s=s.replace(new RegExp(escRe(sep)+'{2,}','g'),sep);            // collapse repeated separators
+  s=s.replace(new RegExp('^'+escRe(sep)+'+|'+escRe(sep)+'+$','g'),''); // trim leading/trailing separator
+  const out=$('out');
+  if(s){out.textContent=s;out.classList.remove('empty')}
+  else{out.textContent='Start typing a title…';out.classList.add('empty')}
+}
+function copySlug(){
+  if($('out').classList.contains('empty')){showToast('Nothing to copy yet');return}
+  navigator.clipboard.writeText($('out').textContent);
+  showToast('Slug copied!');
+}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+slugify();
+</script>
+</body>
+</html>

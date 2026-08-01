@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Tag Generator - Free Open Graph & Twitter Card Tags | Free Tools</title>
+<meta name="description" content="Free meta tag generator. Create SEO title, description, Open Graph, and Twitter Card tags with a live social preview card. Copy the full HTML block.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#8888a0;--border:#252538}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:760px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:.9rem}
+label{display:block;font-size:.85rem;color:var(--text-dim);margin:14px 0 6px}
+input{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;padding:12px 14px;outline:none;font-family:inherit}
+input:focus{border-color:var(--primary)}
+button{cursor:pointer;border:none;border-radius:10px;padding:12px 24px;font-size:.95rem;font-weight:600;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.block{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.block h3{font-size:.95rem;color:var(--text-dim);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+pre{white-space:pre-wrap;word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:'Consolas',monospace;font-size:.85rem;line-height:1.6;color:var(--text);max-height:280px;overflow:auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;max-width:460px}
+.card-img{width:100%;aspect-ratio:1.91/1;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:.85rem}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.card-body{padding:14px}
+.card-domain{font-size:.78rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.card-title{font-size:1rem;font-weight:600;color:var(--text);line-height:1.3}
+.card-desc{font-size:.85rem;color:var(--text-dim);margin-top:6px;line-height:1.4}
+footer{text-align:center;color:var(--text-dim);margin-top:28px;font-size:.85rem}
+footer a{color:var(--accent);text-decoration:none;display:block;margin:4px 0}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform .3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🏷️ Meta Tag Generator</h1>
+<p class="subtitle">Build SEO + Open Graph + Twitter Card tags with a live social preview. Copy the full HTML block.</p>
+
+<label for="title">Page Title</label>
+<input id="title" type="text" placeholder="My Awesome Page" oninput="gen()">
+
+<label for="desc">Meta Description</label>
+<input id="desc" type="text" placeholder="A short, compelling description of the page." oninput="gen()">
+
+<label for="url">Page URL</label>
+<input id="url" type="text" placeholder="https://yoursite.com/page" oninput="gen()">
+
+<label for="image">Social Image URL</label>
+<input id="image" type="text" placeholder="https://yoursite.com/og-image.jpg" oninput="gen()">
+
+<div class="block">
+<h3>Live Preview</h3>
+<div class="card">
+<div class="card-img" id="prevImg">No image set</div>
+<div class="card-body">
+<div class="card-domain" id="prevDomain">yoursite.com</div>
+<div class="card-title" id="prevTitle">Your page title</div>
+<div class="card-desc" id="prevDesc">Your meta description appears here.</div>
+</div>
+</div>
+</div>
+
+<div class="block">
+<h3>HTML Tags <button class="btn-primary" onclick="copyTags()">📋 Copy Tags</button></h3>
+<pre id="code"></pre>
+</div>
+
+<footer>
+<a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a>
+<a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompt Vault →</a>
+</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function domain(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch(e){return u||'yoursite.com'}}
+let tags='';
+function gen(){
+  const t=$('title').value, d=$('desc').value, u=$('url').value.trim(), img=$('image').value.trim();
+  $('prevTitle').textContent=t||'Your page title';
+  $('prevDesc').textContent=d||'Your meta description appears here.';
+  $('prevDomain').textContent=domain(u);
+  const imgEl=$('prevImg');
+  if(img)imgEl.innerHTML='<img src="'+img+'" alt="" onerror="this.parentNode.textContent=\'Image failed to load\'">';
+  else imgEl.textContent='No image set';
+  const L=[];
+  L.push('<title>'+t+'</title>');
+  L.push('<meta name="description" content="'+d+'">');
+  L.push('<meta property="og:type" content="website">');
+  L.push('<meta property="og:title" content="'+t+'">');
+  L.push('<meta property="og:description" content="'+d+'">');
+  if(u)L.push('<meta property="og:url" content="'+u+'">');
+  if(img)L.push('<meta property="og:image" content="'+img+'">');
+  L.push('<meta name="twitter:card" content="summary_large_image">');
+  L.push('<meta name="twitter:title" content="'+t+'">');
+  L.push('<meta name="twitter:description" content="'+d+'">');
+  if(img)L.push('<meta name="twitter:image" content="'+img+'">');
+  tags=L.join('\n');
+  $('code').textContent=tags;
+}
+function copyTags(){navigator.clipboard.writeText(tags);showToast('Tags copied!')}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+gen();
+</script>
+</body>
+</html>

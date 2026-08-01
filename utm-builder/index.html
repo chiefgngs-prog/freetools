@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UTM Builder - Free UTM Tag & Tracking URL Generator | Free Tools</title>
+<meta name="description" content="Free online UTM link builder. Create campaign tracking URLs for Google Analytics, Facebook ads, and email with source, medium, campaign, term, and content parameters.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#8888a0;--border:#252538}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:760px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:.9rem}
+label{display:block;font-size:.85rem;color:var(--text-dim);margin:14px 0 6px}
+input{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;padding:12px 14px;outline:none;font-family:inherit}
+input:focus{border-color:var(--primary)}
+button{cursor:pointer;border:none;border-radius:10px;padding:12px 24px;font-size:.95rem;font-weight:600;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.output{margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.output h3{font-size:.95rem;color:var(--text-dim);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.url{word-break:break-all;font-family:'Consolas',monospace;font-size:.95rem;line-height:1.6;color:var(--accent);min-height:1.6em}
+.url.empty{color:var(--text-dim)}
+footer{text-align:center;color:var(--text-dim);margin-top:28px;font-size:.85rem}
+footer a{color:var(--accent);text-decoration:none;display:block;margin:4px 0}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform .3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔗 UTM Builder</h1>
+<p class="subtitle">Generate campaign tracking URLs for Google Analytics, ads, and email — live as you type.</p>
+
+<label for="url">Destination URL</label>
+<input id="url" type="text" placeholder="https://yoursite.com/landing-page" oninput="build()">
+
+<label for="source">Campaign Source <span style="color:var(--text-dim)">(utm_source — e.g. google, newsletter)</span></label>
+<input id="source" type="text" placeholder="google" oninput="build()">
+
+<label for="medium">Campaign Medium <span style="color:var(--text-dim)">(utm_medium — e.g. cpc, email)</span></label>
+<input id="medium" type="text" placeholder="cpc" oninput="build()">
+
+<label for="campaign">Campaign Name <span style="color:var(--text-dim)">(utm_campaign)</span></label>
+<input id="campaign" type="text" placeholder="spring_sale" oninput="build()">
+
+<label for="term">Campaign Term <span style="color:var(--text-dim)">(optional — utm_term)</span></label>
+<input id="term" type="text" placeholder="running+shoes" oninput="build()">
+
+<label for="content">Campaign Content <span style="color:var(--text-dim)">(optional — utm_content)</span></label>
+<input id="content" type="text" placeholder="logolink" oninput="build()">
+
+<div class="output">
+<h3>Generated URL <button class="btn-primary" onclick="copyUrl()">📋 Copy URL</button></h3>
+<div class="url empty" id="out">Fill in the fields to build your tracking URL…</div>
+</div>
+
+<footer>
+<a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a>
+<a href="https://chiefgngs-prog.github.io/promptvault/">AI Prompt Vault →</a>
+</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function enc(s){return encodeURIComponent(s)}
+function build(){
+  const url=$('url').value.trim();
+  const p=[];
+  const add=(k,v)=>{v=v.trim();if(v)p.push(k+'='+enc(v))};
+  add('utm_source',$('source').value);
+  add('utm_medium',$('medium').value);
+  add('utm_campaign',$('campaign').value);
+  add('utm_term',$('term').value);
+  add('utm_content',$('content').value);
+  const out=$('out');
+  if(!p.length){out.textContent='Fill in the fields to build your tracking URL…';out.classList.add('empty');return}
+  const qs=p.join('&');
+  out.textContent=url?url+(url.includes('?')?'&':'?')+qs:qs;
+  out.classList.remove('empty');
+}
+function copyUrl(){
+  if($('out').classList.contains('empty')){showToast('Nothing to copy yet');return}
+  navigator.clipboard.writeText($('out').textContent);
+  showToast('URL copied!');
+}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+build();
+</script>
+</body>
+</html>
