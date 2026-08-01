@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percentage Calculator - Free Online % Tool | Free Tools</title>
+<meta name="description" content="Free percentage calculator. Find X percent of Y, what percent X is of Y, and percent change from X to Y. Live results, 100% free, no signup.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#7878a0;--border:#252538}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:800px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:0.9rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px}
+.card h3{font-size:1.05rem;margin-bottom:16px;color:var(--text)}
+.card h3 .q{color:var(--text-dim);font-weight:400;font-size:0.85rem;display:block;margin-top:4px}
+.inputs{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.field{flex:1;min-width:90px}
+.field label{font-size:0.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px}
+.field input{width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);border-radius:10px;padding:12px;font-size:1.1rem;outline:none;margin-top:6px}
+.field input:focus{border-color:var(--primary)}
+.sep{color:var(--text-dim);font-size:1.2rem;padding-top:18px}
+.result{margin-top:16px;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;text-align:center}
+.result .num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.result .lbl{font-size:0.8rem;color:var(--text-dim);margin-top:4px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{text-align:center;margin-top:20px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.8rem}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 Percentage Calculator</h1>
+<p class="subtitle">Three common percentage calculations with live results. 100% free, no signup.</p>
+
+<div class="card">
+<h3>What is X% of Y?<span class="q">e.g. What is 15% of 200?</span></h3>
+<div class="inputs">
+<div class="field"><label>Percentage (X)</label><input type="number" id="p1x" value="15" oninput="p1()"></div>
+<span class="sep">% of</span>
+<div class="field"><label>Value (Y)</label><input type="number" id="p1y" value="200" oninput="p1()"></div>
+</div>
+<div class="result"><div class="num" id="r1">—</div><div class="lbl">Answer</div></div>
+</div>
+
+<div class="card">
+<h3>X is what percent of Y?<span class="q">e.g. 30 is what percent of 120?</span></h3>
+<div class="inputs">
+<div class="field"><label>Value (X)</label><input type="number" id="p2x" value="30" oninput="p2()"></div>
+<span class="sep">of</span>
+<div class="field"><label>Total (Y)</label><input type="number" id="p2y" value="120" oninput="p2()"></div>
+</div>
+<div class="result"><div class="num" id="r2">—</div><div class="lbl">Percentage</div></div>
+</div>
+
+<div class="card">
+<h3>Percent change from X to Y?<span class="q">e.g. change from 80 to 100?</span></h3>
+<div class="inputs">
+<div class="field"><label>From (X)</label><input type="number" id="p3x" value="80" oninput="p3()"></div>
+<span class="sep">→</span>
+<div class="field"><label>To (Y)</label><input type="number" id="p3y" value="100" oninput="p3()"></div>
+</div>
+<div class="result"><div class="num" id="r3">—</div><div class="lbl">Change</div></div>
+</div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> to write faster and better</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free Percentage Calculator — No signup, no limits</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a></p>
+</footer>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+const num=(v,d=4)=>v.toLocaleString(undefined,{maximumFractionDigits:d});
+
+function p1(){const x=parseFloat($('p1x').value),y=parseFloat($('p1y').value);$('r1').textContent=(isNaN(x)||isNaN(y))?'—':num(x/100*y)}
+function p2(){const x=parseFloat($('p2x').value),y=parseFloat($('p2y').value);$('r2').textContent=(isNaN(x)||isNaN(y)||y===0)?'—':num(x/y*100)+'%'}
+function p3(){const x=parseFloat($('p3x').value),y=parseFloat($('p3y').value);$('r3').textContent=(isNaN(x)||isNaN(y)||x===0)?'—':num((y-x)/Math.abs(x)*100)+'%'}
+
+function showToast(msg){const t=$('toast')||document.createElement('div');t.id='toast';t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2000)}
+
+p1();p2();p3();
+</script>
+</body>
+</html>

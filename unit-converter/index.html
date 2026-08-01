@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter - Length, Weight, Temperature & More | Free Tools</title>
+<meta name="description" content="Free online unit converter for length, weight, temperature, volume, area, and speed. Live two-way conversion, 100% free, no signup.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#7878a0;--border:#252538}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:800px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:0.9rem}
+.cat-bar{display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.cat-bar button{cursor:pointer;border-radius:10px;padding:10px 16px;font-size:0.85rem;font-weight:600;transition:all 0.2s;background:var(--surface);border:2px solid var(--border);color:var(--text)}
+.cat-bar button:hover{border-color:var(--accent)}
+.cat-bar button.active{border-color:var(--accent);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.converter{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+.cell{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.cell input{width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);border-radius:10px;padding:12px;font-size:1.3rem;outline:none;text-align:center;margin-top:8px}
+.cell input:focus{border-color:var(--primary)}
+.cell select{width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);border-radius:10px;padding:10px;font-size:0.9rem;outline:none;margin-top:8px}
+.cell select:focus{border-color:var(--primary)}
+.cell label{font-size:0.8rem;color:var(--text-dim)}
+.swap-btn{background:var(--surface);border:2px solid var(--border);color:var(--accent);width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:1.2rem;transition:all 0.2s;flex-shrink:0}
+.swap-btn:hover{border-color:var(--accent);transform:rotate(180deg)}
+.formula{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.85rem;min-height:1.2em}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{text-align:center;margin-top:20px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.8rem}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📐 Unit Converter</h1>
+<p class="subtitle">Convert length, weight, temperature, volume, area, and speed. Live two-way conversion, 100% free.</p>
+
+<div class="cat-bar">
+<button class="active" onclick="setCat('length',this)">📏 Length</button>
+<button onclick="setCat('weight',this)">⚖️ Weight</button>
+<button onclick="setCat('temperature',this)">🌡️ Temp</button>
+<button onclick="setCat('volume',this)">🧪 Volume</button>
+<button onclick="setCat('area',this)">🗺️ Area</button>
+<button onclick="setCat('speed',this)">🚗 Speed</button>
+</div>
+
+<div class="converter">
+<div class="cell">
+<label for="fromVal">From</label>
+<select id="from" onchange="convertFrom()"></select>
+<input type="number" id="fromVal" value="1" oninput="convertFrom()">
+</div>
+<button class="swap-btn" onclick="swapUnits()" title="Swap units">⇄</button>
+<div class="cell">
+<label for="toVal">To</label>
+<select id="to" onchange="convertFrom()"></select>
+<input type="number" id="toVal" oninput="convertTo()">
+</div>
+</div>
+
+<div class="formula" id="formula"></div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> to write faster and better</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free Unit Converter — No signup, no limits</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a></p>
+</footer>
+</div>
+
+<script>
+let cat='length';
+function $(id){return document.getElementById(id)}
+
+// Factors relative to a base unit per category. Temperature is special-cased.
+const UNITS={
+length:{u:{m:1,km:1000,cm:0.01,mm:0.001,'µm':1e-6,mi:1609.344,yd:0.9144,ft:0.3048,'in':0.0254,'nmi':1852}},
+weight:{u:{kg:1,g:0.001,mg:1e-6,t:1000,lb:0.45359237,oz:0.028349523125,st:6.35029318}},
+volume:{u:{L:1,mL:0.001,'m³':1000,gal:3.785411784,qt:0.946352946,pt:0.473176473,cup:0.2365882365,floz:0.0295735296}},
+area:{u:{'m²':1,'km²':1e6,'cm²':1e-4,ha:10000,acre:4046.8564224,'ft²':0.09290304,'in²':0.00064516}},
+speed:{u:{'m/s':1,'km/h':0.277777778,mph:0.44704,knot:0.514444444,'ft/s':0.3048}}
+};
+const TEMP=[['C','Celsius (°C)'],['F','Fahrenheit (°F)'],['K','Kelvin (K)']];
+const LABELS={length:'Length',weight:'Weight',temperature:'Temperature',volume:'Volume',area:'Area',speed:'Speed'};
+
+function opts(){return cat==='temperature'?TEMP:Object.keys(UNITS[cat].u).map(k=>[k,k])}
+function renderUnits(){const o=opts();$('from').innerHTML=o.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('to').innerHTML=o.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('from').value=o[0][0];$('to').value=o[1]?o[1][0]:o[0][0];convertFrom()}
+
+function tempToBase(v,u){if(u==='C')return v;if(u==='F')return(v-32)*5/9;return v-273.15}
+function tempFromBase(c,u){if(u==='C')return c;if(u==='F')return c*9/5+32;return c+273.15}
+function toBase(v,u){return cat==='temperature'?tempToBase(v,u):v*UNITS[cat].u[u]}
+function fromBase(b,u){return cat==='temperature'?tempFromBase(b,u):b/UNITS[cat].u[u]}
+
+function fmt(n){if(!isFinite(n))return '';if(n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<1e-4))return n.toExponential(4);return parseFloat(n.toPrecision(8)).toString()}
+
+function convertFrom(){const v=parseFloat($('fromVal').value);if(isNaN(v)){$('toVal').value='';$('formula').textContent='';return;}const r=fromBase(toBase(v,$('from').value),$('to').value);$('toVal').value=fmt(r);showFormula(v,$('from').value,r,$('to').value)}
+function convertTo(){const v=parseFloat($('toVal').value);if(isNaN(v)){$('fromVal').value='';$('formula').textContent='';return;}const r=fromBase(toBase(v,$('to').value),$('from').value);$('fromVal').value=fmt(r);showFormula(r,$('from').value,v,$('to').value)}
+function showFormula(fv,fu,tv,tu){$('formula').textContent=`${fmt(fv)} ${fu} = ${fmt(tv)} ${tu}`}
+function setCat(c,btn){cat=c;document.querySelectorAll('.cat-bar button').forEach(b=>b.classList.toggle('active',b===btn));renderUnits()}
+function swapUnits(){const fu=$('from').value;$('from').value=$('to').value;$('to').value=fu;$('fromVal').value=$('toVal').value;convertFrom()}
+
+renderUnits();
+</script>
+</body>
+</html>

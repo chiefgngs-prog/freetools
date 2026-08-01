@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lorem Ipsum Generator - Free Placeholder Text Tool | Free Tools</title>
+<meta name="description" content="Free Lorem Ipsum generator. Create paragraphs, sentences, or words of placeholder text instantly. One-click copy. 100% free, no signup.">
+<style>
+:root{--bg:#0a0a12;--surface:#13131f;--primary:#6c5ce7;--accent:#00d4aa;--text:#e0e0e8;--text-dim:#7878a0;--border:#252538}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.container{max-width:800px;width:100%}
+h1{text-align:center;font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--text-dim);margin-bottom:24px;font-size:0.9rem}
+.controls{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.mode-bar{display:flex;gap:8px;flex-wrap:wrap}
+.mode-bar button{cursor:pointer;border-radius:10px;padding:10px 18px;font-size:0.9rem;font-weight:600;transition:all 0.2s;background:var(--surface);border:2px solid var(--border);color:var(--text)}
+.mode-bar button:hover{border-color:var(--accent)}
+.mode-bar button.active{border-color:var(--accent);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.count-wrap{display:flex;align-items:center;gap:8px;color:var(--text-dim);font-size:0.9rem}
+input[type=number]{width:90px;background:var(--surface);border:2px solid var(--border);color:var(--text);border-radius:10px;padding:10px;font-size:1rem;outline:none;text-align:center}
+input[type=number]:focus{border-color:var(--primary)}
+textarea{width:100%;height:280px;background:var(--surface);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:1rem;padding:16px;resize:vertical;outline:none;font-family:inherit;line-height:1.7}
+textarea:focus{border-color:var(--primary)}
+.toolbar{display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+button{cursor:pointer;border:none;border-radius:10px;padding:10px 20px;font-size:0.9rem;font-weight:600;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff}
+.btn-secondary{background:var(--surface);border:2px solid var(--border);color:var(--text)}
+.btn-secondary:hover{border-color:var(--accent)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--accent);color:#000;padding:14px 28px;border-radius:12px;font-weight:600;transition:transform 0.3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{text-align:center;margin-top:20px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta a{color:var(--accent);text-decoration:none;font-weight:600}
+footer{text-align:center;color:var(--text-dim);margin-top:20px;font-size:0.8rem}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📝 Lorem Ipsum Generator</h1>
+<p class="subtitle">Generate placeholder text as paragraphs, sentences, or words. Copy with one click. 100% free.</p>
+
+<div class="controls">
+<div class="mode-bar">
+<button class="active" id="m-paras" onclick="setMode('paragraphs',this)">📄 Paragraphs</button>
+<button id="m-sents" onclick="setMode('sentences',this)">💬 Sentences</button>
+<button id="m-words" onclick="setMode('words',this)">🔤 Words</button>
+</div>
+<div class="count-wrap"><label for="count">Count</label><input type="number" id="count" value="5" min="1" max="1000"></div>
+</div>
+
+<textarea id="output" readonly placeholder="Your generated Lorem Ipsum will appear here..."></textarea>
+
+<div class="toolbar">
+<button class="btn-primary" onclick="copyOut()">📋 Copy Text</button>
+<button class="btn-secondary" onclick="generate()">🎲 Generate</button>
+<button class="btn-secondary" onclick="clearAll()">🗑️ Clear</button>
+</div>
+
+<div class="cta">
+<p>🚀 Get <strong>503 AI prompts</strong> to write faster and better</p>
+<p style="margin-top:8px"><a href="https://chiefgngs-prog.github.io/promptvault/">Get the AI Prompt Vault →</a></p>
+</div>
+
+<footer>
+<p>Free Lorem Ipsum Generator — No signup, no limits</p>
+<p><a href="https://chiefgngs-prog.github.io/freetools/">← More Free Tools</a></p>
+</footer>
+</div>
+
+<script>
+let mode='paragraphs';
+function $(id){return document.getElementById(id)}
+
+const LEAD="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+const WORDS="lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure in reprehenderit voluptate velit esse cillum eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum".split(" ");
+const rnd=n=>Math.floor(Math.random()*n);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+function sentence(){const len=6+rnd(12);const w=[];for(let i=0;i<len;i++)w.push(WORDS[rnd(WORDS.length)]);return cap(w.join(" "))+"."}
+function paraLead(){const n=2+rnd(3);const s=[LEAD];for(let i=0;i<n;i++)s.push(sentence());return s.join(" ")}
+function paraBody(){const n=3+rnd(4);const s=[];for(let i=0;i<n;i++)s.push(sentence());return s.join(" ")}
+
+function setMode(m,btn){mode=m;document.querySelectorAll('.mode-bar button').forEach(b=>b.classList.toggle('active',b===btn))}
+
+function generate(){
+let count=parseInt($('count').value,10);
+if(isNaN(count)||count<1)count=1;
+const cap2={paragraphs:100,sentences:500,words:1000}[mode];
+if(count>cap2){count=cap2;$('count').value=count;}
+let out;
+if(mode==='paragraphs'){const p=[];for(let i=0;i<count;i++)p.push(i===0?paraLead():paraBody());out=p.join("\n\n");}
+else if(mode==='sentences'){const s=[LEAD];for(let i=1;i<count;i++)s.push(sentence());out=s.join(" ");}
+else{const lead=LEAD.replace(/[.,]/g,"").split(/\s+/);const w=[];let i=0;while(w.length<count){w.push(i<lead.length?lead[i]:WORDS[rnd(WORDS.length)]);i++;}out=cap(w.slice(0,count).join(" "));}
+$('output').value=out;
+}
+
+function copyOut(){const v=$('output').value;if(!v)return showToast('Nothing to copy');navigator.clipboard.writeText(v);showToast('Copied!')}
+function clearAll(){$('output').value=''}
+
+function showToast(msg){const t=$('toast')||document.createElement('div');t.id='toast';t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},2000)}
+
+generate();
+</script>
+</body>
+</html>
